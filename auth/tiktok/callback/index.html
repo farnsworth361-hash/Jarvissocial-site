@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connecting your TikTok · Jarvis Social</title>
+<style>
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#0b0d10;color:#e9edf1;display:flex;min-height:100vh;align-items:center;justify-content:center}
+  .card{background:#14181d;border:1px solid #232a31;border-radius:18px;padding:40px 44px;max-width:460px;text-align:center}
+  .logo{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#1c2128,#0b0d10);border:1px solid #2a313a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:26px;color:#d6b25e;margin:0 auto 18px}
+  h1{font-size:20px;margin:0 0 6px}
+  p{color:#9aa4ae;font-size:15px;line-height:1.6}
+  a{color:#d6b25e}
+  .spinner{margin:18px auto 0;width:28px;height:28px;border:3px solid #2a313a;border-top-color:#d6b25e;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #fallback{margin-top:18px;display:none}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">JS</div>
+    <h1>Completing your TikTok connection&hellip;</h1>
+    <p>Securely returning you to Jarvis Social.</p>
+    <div class="spinner"></div>
+    <p id="fallback"></p>
+  </div>
+  <script>
+  (function () {
+    var qs = window.location.search || "";
+    // Forward the TikTok authorization result to the local Jarvis Social server,
+    // which validates the CSRF state and exchanges the code for tokens.
+    var target = "http://localhost:3001/auth/tiktok/callback" + qs;
+    try { window.location.replace(target); } catch (e) {}
+    setTimeout(function () {
+      var fb = document.getElementById("fallback");
+      fb.style.display = "block";
+      fb.innerHTML = 'If you are not redirected automatically, <a href="' +
+        target.replace(/"/g, "&quot;") + '">click here to finish connecting</a>.';
+    }, 1500);
+  })();
+  </script>
+</body>
+</html>
