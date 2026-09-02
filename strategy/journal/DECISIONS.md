@@ -11,15 +11,31 @@ Newest entries at the top. Prices are as-of their timestamp.
 
 ## 2026-09-03 — Core sleeve entry (SCHEDULED)
 
-**Scheduled:** 09:45 ET via `trig_01XARL14T3fZ1wm12z1aY6nZ`.
+**Scheduled:** 09:30 ET (market open) via `trig_01XARL14T3fZ1wm12z1aY6nZ`.
 **Action:** BUY SPY, market, `dollar_amount` = 70% of equity (~$1,050), regular
 hours, GFD.
 
-Deliberately not placed at the 09:30 open. Fractional/notional orders on
-Robinhood require `type=market` + regular hours, and an order queued after
-Wednesday's close would have filled into the widest spreads of the day. For a
-buy-and-hold Core position the cost is pennies, but the cadence rule exists and
-there was no reason to break it.
+**Cadence rule consciously overridden — logged so this is not mistaken later for
+the rule being quietly ignored.**
+
+§9 says scan at 09:45 and never trade the open. Originally scheduled for 09:45
+on that basis. The account holder asked why, and the honest answer was that the
+rule buys almost nothing *here*: it was written for option spreads, where an
+opening spread of ten cents on a $145 debit is ~7% of capital at risk. SPY
+**shares** quote a penny wide at 09:31 and a penny wide at 09:45 — on $1,050 the
+difference is a few cents. They then directed the order be placed at the open,
+and that is the correct call on the merits.
+
+**The rule is not weakened for Convexity.** It binds in full on every option
+entry, where it is worth real money. What changed is the recognition that a rule
+written for two-leg option execution was being applied to a buy-and-hold share
+purchase where its rationale does not carry.
+
+**Why it could not happen on 2026-09-02 at all:** dollar-based fractional orders
+require `type=market` **and** `market_hours=regular_hours`; the tool rejects them
+in extended and overnight sessions. After the 16:00 close the only alternative
+was a whole-share limit order in the overnight book — 1 share ≈ $764.50, which
+is 51% of the account instead of 70%, at a wider spread. Wrong size, worse fill.
 
 **Outcome:** _pending_
 
