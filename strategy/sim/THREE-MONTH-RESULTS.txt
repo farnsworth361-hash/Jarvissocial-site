@@ -1,0 +1,42 @@
+====================================================================================
+                    WHAT $1,500 -> $25,000 IN 3 MONTHS REQUIRES                     
+====================================================================================
+  multiple needed        : 16.67x
+  per trading day (63)   : +4.57%  EVERY day
+  per month              : +155.4%
+  annualised             : 77,160x per year
+  $1,500 at that rate, 1 yr: $115,740,741
+
+  For reference, Renaissance Medallion — the best track record in the
+  history of finance — compounds at roughly 66%/yr gross. That is
+  0.000855% of the rate this target needs.
+
+  Doublings required: log2(16.67) = 4.06. You need the account to
+  double four times over, back to back, in thirteen weeks.
+
+====================================================================================
+                               ALL-IN (chasing $25k)                                
+====================================================================================
+  reached $25,000        :   0.639%   (1,278 of 200,000 paths)
+  wiped out (<$60)       :   50.35%
+  median outcome         : $        47
+  5th / 25th percentile  : $         0 / $0
+  75th / 95th percentile : $       378 / $3,026
+  ended below $1,500     :    91.3%
+  ended below $500       :    77.8%
+
+====================================================================================
+                               RATCHET (as designed)                                
+====================================================================================
+  reached $25,000        :   0.000%   (0 of 200,000 paths)
+  median outcome         : $     1,317
+  5th / 25th percentile  : $     1,051 / $1,178
+  75th / 95th percentile : $     1,524 / $1,915
+  ended below $1,500     :    72.7%
+  ended below $500       :     0.0%
+
+====================================================================================
+                                  THE DEPOSIT PATH                                  
+====================================================================================
+  $25,000 in 3 months, funded rather than traded: $7,833/month.
+  Certainty: 100%. No path dependence, no ruin branch.
