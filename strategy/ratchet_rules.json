@@ -214,7 +214,16 @@
       },
       "break_even_hit_rate_5_grid": 0.343,
       "break_even_hit_rate_1_grid": 0.475
-    }
+    },
+    "whitelist_convexity_active": [
+      "SPY",
+      "NVDA",
+      "PLTR"
+    ],
+    "whitelist_convexity_watchlist": [
+      "TSLA",
+      "MSTR"
+    ]
   },
   "risk_limits": {
     "max_risk_per_position_usd": 150.0,
@@ -237,10 +246,13 @@
     "max_annual_refill_pct_of_year_start_equity": 0.2
   },
   "cadence": {
-    "daily_scan_et": "09:45",
+    "arm_pass_et": "09:45",
+    "arm_pass_role": "conditions only (BB width pct, IV rank, RSI2, 200-SMA, earnings proximity, day-trade budget). Computes the day trigger levels. NEVER enters.",
+    "trigger_pass_et": "15:45",
+    "trigger_pass_role": "reads the near-final CLOSE against the armed levels; this is the only pass that enters.",
+    "why_two_passes": "Both setups trigger on a CLOSE, so a morning pass cannot evaluate a trigger. A single 09:45 pass would miss every signal or tempt a forbidden intraday entry.",
     "never_trade_the_open": true,
-    "open_avoidance_rationale": "First 15 minutes carry the widest spreads of the day (friction constraint C4).",
-    "daily_budget_check_et": "15:50",
+    "day_trade_budget_check_et": "15:50",
     "ratchet_click_et": "friday 15:45",
     "monthly_resize": "first_session_of_month"
   },

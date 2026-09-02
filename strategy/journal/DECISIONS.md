@@ -9,6 +9,41 @@ Newest entries at the top. Prices are as-of their timestamp.
 
 ---
 
+## 2026-09-02 — Convexity universe expanded; scan schedule set
+
+**Added to the Convexity sleeve:** NVDA (primary high-beta) and PLTR
+(secondary), alongside SPY. TSLA and MSTR analysed and left on the watchlist —
+TSLA for book depth (ask size 2 behind a 4,962 OI headline), MSTR for friction
+(22.7% crossing cost, 63.6% break-even hit rate).
+
+**The governing finding** (`HIGH-BETA-MODULE.md`): delta-matched 30-delta
+verticals showed 21–22% probability of profit across IV from 10.7% (SPY) to
+71.4% (MSTR). Higher volatility does not improve win odds — it is already in
+the premium. What improves is reward:risk (NVDA 3.08:1 vs SPY 2.45:1) and the
+target as a share of max profit (32.5% vs 40.8%). Same odds, bigger swings
+both ways. Recorded here so nobody later mistakes this for an edge.
+
+**Cadence corrected.** Both setups trigger on a *close*, so the single 09:45
+scan in v1.0 could never have evaluated a trigger. Split into an ARM pass at
+09:45 (conditions and levels only, never enters) and a TRIGGER pass at 15:45
+(reads the close, enters if rails pass).
+
+**Scans scheduled:**
+
+| Session | Trigger | Notes |
+|---|---|---|
+| Thu Sep 3, 15:45 ET | `trig_0177cLpLKQnnBGNStzK5uDdi` | CB only; TPB blocked by NFP proximity |
+| Fri Sep 4, 15:45 ET | `trig_01BYy45Q7s3M9qJaqzizWa74` | NFP day — CB plausible, but elevated IV should self-disqualify it |
+| Tue Sep 8, 15:45 ET | `trig_016rp6J5k7on7Q7dNuNL3z1d` | First fully clean session; all setups live |
+
+Mon Sep 7 is Labor Day — market closed.
+
+**Gap this closes:** the Compression Break was armed on Sep 2 with nothing
+scheduled to read Thursday's or Friday's close. An armed signal with no
+observer is not a strategy.
+
+---
+
 ## 2026-09-03 — Core sleeve entry (SCHEDULED)
 
 **Scheduled:** 09:30 ET (market open) via `trig_01XARL14T3fZ1wm12z1aY6nZ`.

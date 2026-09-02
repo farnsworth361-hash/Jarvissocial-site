@@ -476,10 +476,30 @@ lever on a $1,500 account — is selling something.
 
 ## 9. Operating cadence for the agent
 
+### Arm vs. trigger — the two-pass structure
+
+**Both setups trigger on a CLOSE.** Compression Break needs a close outside the
+20-day band; Trend Pullback needs a close above the prior session's high. A
+morning scan therefore *cannot* evaluate a trigger — it can only assess
+standing conditions. Running a single 09:45 pass, as v1.0 specified, would
+either miss every signal or tempt an intraday entry the rules forbid.
+
+The scan is therefore two passes with different jobs:
+
+| When | Pass | What it can decide |
+|---|---|---|
+| **09:45 ET** | **ARM** | Conditions only: BB width percentile, IV rank, RSI(2), 200-SMA, earnings proximity, remaining day-trade budget. Produces a candidate list and the exact trigger levels for the day. **Never enters.** |
+| **15:45 ET** | **TRIGGER** | Reads the near-final close against those levels. If a setup fires and every §6 rail passes, this is the pass that enters — as a single two-leg limit order at mid, walking at most one tick. |
+
+The 09:45 pass exists so the 15:45 pass is fast and mechanical: by the close
+the levels are already computed and the only question is whether price crossed
+them. Fifteen minutes is enough to place a prepared spread order; it is not
+enough to do the analysis from scratch.
+
 | When | Action |
 |---|---|
-| Daily 09:45 ET | Scan whitelist against CB and PED filters. **Never trade the open** — the first 15 minutes have the widest spreads of the day (C4). |
-| On signal | Verify every rail in §6, then enter. Max 2 entries/week. Skip entirely if LOCKDOWN is active. |
+| Daily 09:45 ET | **ARM pass** (above). Never trade the open — the first 15 minutes carry the widest spreads of the day (C4). |
+| Daily 15:45 ET | **TRIGGER pass** (above). Verify every rail in §6, then enter. Max 2 entries/week. Skip entirely if LOCKDOWN is active. |
 | Immediately after entry | Place target and stop as **GTC orders**. Non-negotiable — this is what keeps exits off the day-trade budget. |
 | Daily 15:50 ET | Check day-trade budget. If ≤ 1 remaining, set LOCKDOWN. |
 | **Friday 15:45 ET** | **Ratchet click.** Compute sweep or refill per §3. Log it. |
