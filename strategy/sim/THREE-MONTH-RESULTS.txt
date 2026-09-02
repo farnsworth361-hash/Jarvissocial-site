@@ -1,3 +1,29 @@
+======================================================================================
+              REALISTIC 3-MONTH OUTCOMES — $1,500 start, 63 trading days              
+======================================================================================
+
+scenario                      median      5th     25th     75th     95th   P(up)
+--------------------------------------------------------------------------------------
+No edge at all (31%)       $   1,364 $  1,067 $  1,206 $  1,588 $  1,994   33.2%
+Break-even (39%)           $   1,541 $  1,121 $  1,317 $  1,822 $  2,266   54.4%
+Modest edge (45%)          $   1,720 $  1,182 $  1,451 $  2,025 $  2,486   70.5%
+Filters work well (50%)    $   1,879 $  1,254 $  1,583 $  2,194 $  2,659   81.0%
+--------------------------------------------------------------------------------------
+Core only (no trading)     $   1,517 $  1,385 $  1,461 $  1,576 $  1,668   58.1%
+
+Closed trades in 3 months: ~17
+
+======================================================================================
+                             READ THIS BEFORE THE NUMBERS                             
+======================================================================================
+Across EVERY scenario the 90% range is roughly $1,050 to $2,000.
+Three months is too short for the edge — if there is one — to
+separate itself from noise. Even 'filters work well' has a wide
+losing tail, and even 'no edge' has winning paths. You cannot tell
+these apart from three months of P&L. That is the whole point.
+
+~17 closed trades is a quarter of the 60 that section 10
+requires before the strategy can be judged at all.
 ====================================================================================
                     WHAT $1,500 -> $25,000 IN 3 MONTHS REQUIRES                     
 ====================================================================================
