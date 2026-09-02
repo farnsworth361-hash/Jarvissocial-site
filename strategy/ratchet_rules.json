@@ -1,6 +1,6 @@
 {
   "strategy": "RATCHET",
-  "version": "1.0",
+  "version": "1.1",
   "designed": "2026-09-02",
   "account": {
     "label": "Agentic",
@@ -119,10 +119,6 @@
     "min_open_interest_at_strike": 1000,
     "max_spread_bid_ask_pct_of_mid": 0.1,
     "min_underlying_adv_shares": 5000000,
-    "underlying_price_min": 10.0,
-    "underlying_price_max": 120.0,
-    "price_band_exception": "index ETFs with $1 strike increments (SPY, QQQ, IWM)",
-    "price_band_rationale": "A $5-wide-only chain forces $500 max risk = 33% of account on one position.",
     "excluded": [
       "0DTE",
       "expirations under 21 DTE at entry",
@@ -183,7 +179,42 @@
         "price_at_design": 402.16,
         "restriction": "$1-wide strikes only"
       }
-    ]
+    ],
+    "strike_grid_rule": "trade the liquid strike grid for the chain ($5 on SPY), never the $1 grid",
+    "width_rule": "width is FREE (max loss on a debit vertical = debit paid, not width); choose width so the debit lands just under the $150 cap",
+    "corrected_in_v1_1": "v1.0 required $1-strike ETFs on the false premise that a $5 width forces $500 max risk. That is a CREDIT-spread number. The old rule also steered into the illiquid grid.",
+    "strike_grid_evidence_spy_2026_10_16": {
+      "785_call": {
+        "bid": 5.07,
+        "ask": 5.08,
+        "spread": 0.01,
+        "open_interest": 13255,
+        "grid": 5
+      },
+      "790_call": {
+        "bid": 3.62,
+        "ask": 3.63,
+        "spread": 0.01,
+        "open_interest": 13074,
+        "grid": 5
+      },
+      "784_call": {
+        "bid": 5.42,
+        "ask": 5.52,
+        "spread": 0.1,
+        "open_interest": 1130,
+        "grid": 1
+      },
+      "787_call": {
+        "bid": 4.48,
+        "ask": 4.57,
+        "spread": 0.09,
+        "open_interest": 743,
+        "grid": 1
+      },
+      "break_even_hit_rate_5_grid": 0.343,
+      "break_even_hit_rate_1_grid": 0.475
+    }
   },
   "risk_limits": {
     "max_risk_per_position_usd": 150.0,
@@ -261,5 +292,85 @@
     "doubler_geometric_edge_with_stops": -0.213,
     "key_finding": "A full-size daily bet with a FLAT arithmetic edge still ruins 100% of the time, because volatility drag makes its geometric return -21%/trade. Sizing, not skill, is what defeats this.",
     "caveat": "Assumptions, not backtests. No historical validation of CB or PED filters was performed."
+  },
+  "execution": {
+    "never_market_order": true,
+    "single_two_leg_spread_order": true,
+    "legging_in_prohibited": true,
+    "limit_at_mid": true,
+    "max_price_walk_usd": 0.02,
+    "walk_step_usd": 0.01,
+    "walk_interval_seconds": 30,
+    "if_unfilled_stand_down": true,
+    "place_gtc_exits_immediately_on_fill": true,
+    "no_trading_first_15_minutes": true,
+    "rationale": "Strike choice moves break-even hit rate 13 points; order type moves it nearly as much. Execution IS the strategy at $1,500."
+  },
+  "spy_only_module": {
+    "doc": "SPY-MODULE.md",
+    "setup_b_replaced": "PED cannot fire on SPY (no earnings); replaced by Trend Pullback (TPB)",
+    "trend_pullback": {
+      "id": "TPB",
+      "regime_filter": "close > 200-day SMA",
+      "washout": "RSI(2) < 15",
+      "trigger": "first daily close above prior session high",
+      "event_filter": "not within 2 sessions of FOMC, CPI, or NFP",
+      "direction": "long only by construction"
+    },
+    "concurrency": {
+      "max_same_direction_positions": 2,
+      "third_position_allowed_only_if": "opposite direction",
+      "same_direction_must_use_different_expirations": true
+    },
+    "correlation_cost_rho_0_85_vs_0": {
+      "median": [
+        1533,
+        1469
+      ],
+      "fifth_pct": [
+        1079,
+        1035
+      ],
+      "ninety_fifth_pct": [
+        2759,
+        3365
+      ],
+      "p_double": [
+        0.027,
+        0.084
+      ],
+      "reading": "Correlation does not cost expected return; it widens the distribution both ways. Survivable only because the sleeve is capped at 30%."
+    },
+    "whole_account_is_one_asset": "Core is SPY and Convexity is SPY, so there is no diversification anywhere in this account. Explicit accepted tradeoff."
+  },
+  "live_state_2026_09_02": {
+    "spy_price": 765.07,
+    "sma_200": 710.66,
+    "bb20": {
+      "lower": 756.58,
+      "middle": 765.05,
+      "upper": 773.52,
+      "width_pct": 2.21
+    },
+    "bb_width_1y_context": {
+      "april_2026_peak_pct": 16.1,
+      "dec_2025_trough_pct": 2.52,
+      "reading": "current 2.21% is at or near the 1-year minimum"
+    },
+    "rsi_2_last_5": [
+      62.98,
+      91.64,
+      59.51,
+      30.97,
+      9.69
+    ],
+    "atm_iv_pct": [
+      10.5,
+      11.1
+    ],
+    "compression_break": "ARMED, NOT TRIGGERED \u2014 needs a daily close above 773.52 or below 756.58",
+    "trend_pullback": "regime + washout PASS; trigger pending today close",
+    "caution": "The two setups firing together are not independent confirmations \u2014 both read the same quiet tape. Size as ONE position.",
+    "orders_placed": "none"
   }
 }

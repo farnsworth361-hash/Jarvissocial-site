@@ -8,7 +8,8 @@ Not derived from any existing published model or third-party system.
 
 | File | What it is |
 |---|---|
-| [`RATCHET.md`](RATCHET.md) | The full specification. Start here. |
+| [`RATCHET.md`](RATCHET.md) | The full specification (v1.1). Start here. |
+| [`SPY-MODULE.md`](SPY-MODULE.md) | SPY-only adaptation, live calibration, and two corrections to the base spec |
 | [`ratchet_rules.json`](ratchet_rules.json) | Machine-readable rulebook for the agent to enforce |
 | [`sim/ratchet_sim.py`](sim/ratchet_sim.py) | 20,000-path Monte Carlo backing the claims in §7 |
 | [`sim/RESULTS.txt`](sim/RESULTS.txt) | Committed output of that simulation |
@@ -46,6 +47,25 @@ sizing does.
 RATCHET's realistic target is **≈ +22%/yr** at a 45% hit rate — doubling the
 account in about **3.5 years**, with a simulated probability of ruin of **0.0%**
 and a 5th-percentile outcome of about **−32%** even when the strategy is losing.
+
+## Trading SPY only
+
+`SPY-MODULE.md` adapts this for SPY exclusively. Building it surfaced two errors
+in v1.0 worth knowing about:
+
+1. **Max loss on a debit vertical is the debit paid, not the width.** v1.0's
+   universe filter claimed a $5-wide spread risks $500 — that is a *credit*
+   spread number. A $5-wide SPY spread at 30 delta risks ~$145.
+2. **The old rule pointed at the illiquid strikes.** SPY's $5-grid strikes have
+   6–12x the open interest and one-cent bid/ask spreads; the $1-grid strikes sit
+   at nine to ten cents. Trading the wrong grid raises round-trip friction from
+   ~1.4% of debit to ~21%, moving the **break-even hit rate from 34.3% to
+   47.5%** — a bigger swing than any plausible edge from the entry signals.
+
+Also in that module: `PED` cannot fire on SPY (no earnings), so it is replaced
+by a Trend Pullback setup; concurrency is tightened because three SPY positions
+are one bet, not three; and the whole account becomes a single asset, which is
+stated as an accepted tradeoff rather than hidden.
 
 ## Status
 

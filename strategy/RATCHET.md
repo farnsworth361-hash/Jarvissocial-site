@@ -1,4 +1,4 @@
-# RATCHET v1.0
+# RATCHET v1.1
 
 **An original trading strategy built exclusively for Robinhood account ••••8464 ("Agentic").**
 
@@ -7,7 +7,8 @@ strategy. Every rule below is derived from the four binding constraints this
 specific account actually operates under.
 
 - **Author:** Claude Code, for farnsworth361
-- **Designed:** 2026-09-02
+- **Designed:** 2026-09-02 · **v1.1** corrects the strike-grid rule (§6)
+- **SPY-only adaptation:** see `SPY-MODULE.md`
 - **Account snapshot at design time:** limited margin individual · options level 3 ·
   $1,500.00 total value, 100% cash · 0 equity positions · 0 option positions ·
   0 realized trades in the trailing 90 days
@@ -298,14 +299,33 @@ chain loses money to the spread.
 | Open interest at chosen strikes | ≥ 1,000 | You must be able to get out |
 | Bid/ask on the **spread** | ≤ 10% of mid | Direct C4 defense |
 | Underlying average daily volume | ≥ 5M shares | Liquidity begets liquidity |
-| Underlying price | $10–$120, **or** a $1-strike index ETF | See below |
+| Strike grid | the **liquid** grid for that chain ($5 on SPY) | See below |
 | Days to expiration at entry | 30–45 | §4 survivability |
 
-**The price band is the most account-specific rule here.** A chain that only
-offers $5-wide strikes forces a maximum risk of $500 per spread — 33% of this
-entire account on a single position. That is disqualifying regardless of how
-good the setup looks. The band exists so that $0.50 and $1.00-wide verticals are
-available, which is what makes a $150 risk unit expressible at all.
+> ### ⚠ Corrected in v1.1 — this rule previously said the opposite
+>
+> Earlier versions of this section required an underlying priced $10–$120 "or a
+> $1-strike index ETF," justified by the claim that *"a chain that only offers
+> $5-wide strikes forces a maximum risk of $500 per spread."*
+>
+> **That justification was wrong.** $500 is the max loss on a *credit* vertical.
+> RATCHET trades **debit** verticals, where **max loss is the debit paid** and
+> the width only sets max profit. A $5-wide SPY spread at 30 delta costs about
+> $145 — inside the $150 cap.
+>
+> Worse, the rule steered toward $1-increment strikes, which on SPY are the
+> *illiquid* ones: the $5-grid strikes carry 6–12x the open interest and
+> one-cent bid/ask spreads, against nine to ten cents on the $1 grid. Trading
+> the $1 grid raises round-trip friction from ~1.4% of debit to ~21%, which
+> moves the **break-even hit rate from 34.3% to 47.5%**.
+>
+> See `SPY-MODULE.md` §1 for the live quotes demonstrating this.
+
+**The corrected rule: select strikes on the chain's liquid grid, then choose the
+width so the debit lands just under the $150 per-position cap.** Width is free —
+it does not set your risk — so spend that freedom on liquidity. At this account
+size, thirteen points of break-even hit rate turn on this single choice, which
+is more than the entry filters in §5 could plausibly contribute.
 
 **Starting whitelist** — prices verified live at design time (2026-09-02):
 

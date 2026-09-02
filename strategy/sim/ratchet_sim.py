@@ -24,7 +24,7 @@ Pure stdlib. Run:  python3 ratchet_sim.py
 
 import random
 import math
-from statistics import mean
+from statistics import mean, NormalDist
 
 SEED = 20260902
 SESSIONS = 252
@@ -175,6 +175,105 @@ def run_ratchet(rng, hit_rate):
     return max(0.0, core + cash)
 
 
+def run_ratchet_corr(rng, hit_rate, rho):
+    """RATCHET where concurrent trade outcomes are correlated by `rho`.
+
+    rho=0.0  -> a diversified sleeve (independent underlyings)
+    rho=0.85 -> a SPY-only sleeve: every position is the same directional bet
+                on the same index, so they win and lose together.
+
+    A persistent market factor M (AR(1), phi=0.95 daily, standard normal
+    marginally) drives all outcomes through a Gaussian copula. Mean expectancy
+    is unchanged by rho -- only the DISPERSION changes. That is the whole point:
+    correlation does not cost you expected return, it costs you the ability to
+    survive the bad draw.
+    """
+    nd = NormalDist()
+    thresh = nd.inv_cdf(hit_rate)      # Z < thresh  => win
+    phi = 0.95
+    m = rng.gauss(0, 1)
+
+    core = START_EQUITY * CORE_TARGET_PCT
+    cash = START_EQUITY * CONVEXITY_PCT
+    s0 = START_EQUITY * CONVEXITY_PCT
+    hwm = START_EQUITY
+    refilled_this_year = 0.0
+    halt_until = -1
+    open_positions = []
+    opened_this_week = 0
+
+    mu_d = CORE_MU_ANNUAL / 252.0
+    sig_d = CORE_SIGMA_ANNUAL / math.sqrt(252.0)
+
+    for day in range(SESSIONS):
+        m = phi * m + math.sqrt(1 - phi ** 2) * rng.gauss(0, 1)
+        core *= math.exp((mu_d - 0.5 * sig_d ** 2) + sig_d * rng.gauss(0, 1))
+
+        still_open = []
+        for pos in open_positions:
+            if pos[0] <= day:
+                debit, z_idio = pos[1], pos[2]
+                z = rho * m + math.sqrt(1 - rho ** 2) * z_idio
+                friction = FRICTION_PCT * debit
+                if z < thresh:
+                    gross = debit * (1.0 + TARGET_MULT)
+                elif rng.random() < GAP_PROB_GIVEN_LOSS:
+                    gross = debit * (1.0 + GAP_MULT)
+                else:
+                    gross = debit * (1.0 + STOP_MULT)
+                cash += gross - friction
+            else:
+                still_open.append(pos)
+        open_positions = still_open
+
+        deployed = sum(p[1] for p in open_positions)
+        equity = core + cash + deployed
+        hwm = max(hwm, equity)
+
+        if equity < hwm * (1.0 - DRAWDOWN_HALT) and day > halt_until:
+            halt_until = day + HALT_SESSIONS
+
+        if day % 5 == 4:
+            opened_this_week = 0
+            sleeve_value = cash + deployed
+            if sleeve_value > s0:
+                sweep = min(sleeve_value - s0, cash)
+                core += sweep
+                cash -= sweep
+            elif sleeve_value < s0:
+                want = s0 - sleeve_value
+                amt = min(want,
+                          REFILL_CAP_WEEKLY_PCT * max(equity, 0.0),
+                          max(0.0, REFILL_CAP_ANNUAL_PCT * START_EQUITY
+                              - refilled_this_year),
+                          max(core, 0.0))
+                core -= amt
+                cash += amt
+                refilled_this_year += amt
+
+        if (day > halt_until and len(open_positions) < MAX_CONCURRENT
+                and opened_this_week < MAX_NEW_PER_WEEK
+                and rng.random() < 0.35):
+            slots_free = MAX_CONCURRENT - len(open_positions)
+            debit = min(MAX_RISK_PER_POSITION, cash / slots_free)
+            if debit >= 20.0:
+                cash -= debit
+                open_positions.append(
+                    [day + rng.randint(HOLD_MIN, HOLD_MAX), debit,
+                     rng.gauss(0, 1)])
+                opened_this_week += 1
+
+    for pos in open_positions:
+        debit, z_idio = pos[1], pos[2]
+        z = rho * m + math.sqrt(1 - rho ** 2) * z_idio
+        friction = FRICTION_PCT * debit
+        if z < thresh:
+            cash += debit * (1.0 + TARGET_MULT) - friction
+        else:
+            cash += debit * (1.0 + STOP_MULT) - friction
+    return max(0.0, core + cash)
+
+
 def run_doubler(rng, table=None):
     """One 252-session path of a full-size daily-doubling attempt."""
     table = table or DOUBLER_OUTCOMES
@@ -310,6 +409,57 @@ def main():
     print("the average trade is fine. That gap is volatility drag, and it is")
     print("what position sizing exists to defeat. It is the entire reason the")
     print("RATCHET convexity sleeve is capped at 30% and swept weekly.")
+    print()
+    print("=" * 117)
+    print("SPY-ONLY: what correlation costs".center(117))
+    print("=" * 117)
+    print("Three positions on one index are not three bets. Same mean, worse")
+    print("tail -- correlation is paid in survivability, not expected return.")
+    print()
+    print(f"{'Sleeve':<28} {'median':>10} {'mean':>9} {'5th pct':>10} "
+          f"{'95th pct':>11} {'P(ruin)':>8} {'P(profit)':>9} {'P(2x yr)':>9} "
+          f"{'P(-50%)':>10}")
+    print("-" * 117)
+    for label, rho in (("Diversified (rho=0.00)", 0.00),
+                       ("SPY-only     (rho=0.85)", 0.85)):
+        rngc = random.Random(SEED + 7)
+        finals = [run_ratchet_corr(rngc, 0.45, rho) for _ in range(PATHS)]
+        print(fmt(summarize(label, finals, ruins=0)))
+    print("-" * 117)
+    print()
+
+    print("=" * 117)
+    print("STRIKE-GRID FRICTION (live SPY 2026-10-16 quotes)".center(117))
+    print("=" * 117)
+    print("Max loss on a DEBIT vertical is the debit paid -- not the width.")
+    print("So width is free to choose, and it should be chosen for LIQUIDITY.")
+    print()
+    grids = [
+        ("785/790  ($5 grid)", 5.075, 3.625, 5.08, 3.62, 5.00, 26329),
+        ("784/787  ($1 grid)", 5.470, 4.530, 5.52, 4.48, 3.00, 1873),
+    ]
+    print(f"{'Spread':<22} {'mid debit':>10} {'crossed':>9} {'slippage':>9} "
+          f"{'% of debit':>11} {'max profit':>11} {'R:R':>7} {'comb. OI':>10}")
+    print("-" * 117)
+    for name, lm, sm, la, sb, width, oi in grids:
+        mid = lm - sm
+        crossed = la - sb
+        slip = crossed - mid
+        print(f"{name:<22} ${mid*100:>9,.2f} ${crossed*100:>8,.2f} "
+              f"${slip*100:>8,.2f} {slip/mid*100:>10.1f}% "
+              f"${(width-mid)*100:>10,.2f} {(width-mid)/mid:>6.2f}:1 "
+              f"{oi:>10,}")
+    print("-" * 117)
+    print()
+    print("Break-even hit rate = (0.50 + round-trip friction) / 1.50")
+    for name, lm, sm, la, sb, width, oi in grids:
+        rt = 2 * ((la - sb) - (lm - sm)) / (lm - sm)
+        print(f"  {name:<22} round-trip {rt*100:>5.1f}% of debit "
+              f"-> break-even hit rate {(0.50 + rt) / 1.50 * 100:>5.1f}%")
+    print()
+    print("Same signal, same account, same risk. Thirteen points of required")
+    print("hit rate, decided entirely by which strike grid you trade. That is")
+    print("larger than any edge the entry filters could plausibly supply.")
     print()
     print("NOTE: assumptions, not backtests. See the module docstring.")
 
