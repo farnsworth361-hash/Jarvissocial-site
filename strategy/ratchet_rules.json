@@ -1,0 +1,265 @@
+{
+  "strategy": "RATCHET",
+  "version": "1.0",
+  "designed": "2026-09-02",
+  "account": {
+    "label": "Agentic",
+    "account_number_masked": "****8464",
+    "type": "limited_margin_individual",
+    "option_level": 3,
+    "equity_at_design": 1500.0,
+    "leverage_available": false,
+    "pdt_restricted": true,
+    "pdt_threshold": 25000.0
+  },
+  "sleeves": {
+    "core": {
+      "target_pct": 0.7,
+      "instruments": [
+        "broad_index_etf"
+      ],
+      "fractional_ok": true,
+      "may_be_sold_to_fund_convexity": false,
+      "rebalance": "monthly"
+    },
+    "convexity": {
+      "target_pct": 0.3,
+      "charter_size_usd": 450.0,
+      "instruments": [
+        "debit_vertical_spread"
+      ],
+      "is_only_sleeve_that_can_zero": true
+    }
+  },
+  "ratchet": {
+    "click_schedule": "friday_1545_ET",
+    "on_surplus": {
+      "condition": "S > S0",
+      "action": "sweep_to_core",
+      "amount": "S - S0",
+      "note": "Profits are removed from the risk sleeve and never re-risked at larger size."
+    },
+    "on_deficit": {
+      "condition": "S < S0",
+      "action": "refill_from_core",
+      "amount": "min(S0 - S, 0.02 * total_equity, annual_refill_budget_remaining)",
+      "max_refill_pct_of_equity_per_week": 0.02,
+      "note": "Losses reload slowly and capped. Revenge sizing is structurally unavailable.",
+      "max_annual_refill_pct_of_year_start_equity": 0.2,
+      "annual_cap_rationale": "The weekly cap limits the RATE of bleed but not the TOTAL. Without an annual budget, 2%/week for 52 weeks could drain Core entirely."
+    },
+    "charter_resize": {
+      "schedule": "monthly_first_session",
+      "formula": "S0 = 0.30 * equity_high_water_mark",
+      "may_decrease": false,
+      "note": "Bet size follows banked equity only. Never unrealized PnL, never conviction."
+    }
+  },
+  "day_trade_budget": {
+    "max_per_rolling_5_business_days": 3,
+    "reserved_for": "exits_only",
+    "may_be_used_for_entries": false,
+    "permitted_exit_reasons": [
+      "same_session_stop_breach",
+      "gap_or_news_thesis_invalidation",
+      "assignment_or_pin_risk_cleanup"
+    ],
+    "minimum_available_floor": 1,
+    "lockdown_trigger": "available_day_trades <= 1",
+    "lockdown_effect": "no_new_convexity_entries; core_unaffected"
+  },
+  "setups": {
+    "compression_break": {
+      "id": "CB",
+      "role": "primary",
+      "thesis": "Volatility mean-reverts and clusters; buy cheap optionality ahead of a statistically due expansion. Direction is read off the break, never forecast.",
+      "entry_conditions": {
+        "rv10_percentile_1y_max": 25,
+        "bb20_width_percentile_1y_max": 20,
+        "atm_iv_rank_max": 30,
+        "max_pct_distance_from_bb20_midline": 0.02,
+        "trigger": "first_daily_CLOSE_outside_20day_band",
+        "intraday_triggers_allowed": false
+      }
+    },
+    "post_earnings_drift": {
+      "id": "PED",
+      "role": "diversifier",
+      "thesis": "A held earnings gap drifts for weeks as institutions reposition. Enter AFTER the IV crush, never before.",
+      "entry_conditions": {
+        "sessions_since_earnings_min": 1,
+        "sessions_since_earnings_max": 3,
+        "min_gap_pct": 0.04,
+        "min_relative_volume": 2.0,
+        "min_gap_retention_pct": 0.6,
+        "consecutive_closes_holding_gap": 2,
+        "post_crush_iv_rank_max": 40
+      }
+    }
+  },
+  "structure": {
+    "type": "debit_vertical_spread",
+    "dte_min": 30,
+    "dte_max": 45,
+    "long_leg_delta_target": 0.3,
+    "short_leg": "one_strike_width_further_otm",
+    "rationale": "Short leg cuts debit 35-45%, converting a 1-position sleeve into a 3-position sleeve and capping theta bleed."
+  },
+  "exits": {
+    "profit_target_pct_of_debit": 1.0,
+    "stop_loss_pct_of_debit": 0.5,
+    "time_exit_dte": 10,
+    "payoff_ratio": "2:1",
+    "break_even_hit_rate": 0.4,
+    "break_even_formula": "p*1.00 - (1-p)*0.50 - 0.10_friction = 0  ->  p = 0.40",
+    "orders_placed": "GTC_immediately_on_fill",
+    "note": "Target is stated in units of DEBIT PAID, not percent of max profit. The two differ and mixing them corrupts all downstream expectancy math."
+  },
+  "universe_filters": {
+    "min_open_interest_at_strike": 1000,
+    "max_spread_bid_ask_pct_of_mid": 0.1,
+    "min_underlying_adv_shares": 5000000,
+    "underlying_price_min": 10.0,
+    "underlying_price_max": 120.0,
+    "price_band_exception": "index ETFs with $1 strike increments (SPY, QQQ, IWM)",
+    "price_band_rationale": "A $5-wide-only chain forces $500 max risk = 33% of account on one position.",
+    "excluded": [
+      "0DTE",
+      "expirations under 21 DTE at entry",
+      "stocks under $5",
+      "single-name biotech",
+      "anything failing liquidity filters"
+    ],
+    "whitelist": [
+      {
+        "symbol": "SPY",
+        "price_at_design": 765.15,
+        "role": "index"
+      },
+      {
+        "symbol": "QQQ",
+        "price_at_design": 708.62,
+        "role": "index"
+      },
+      {
+        "symbol": "IWM",
+        "price_at_design": 294.08,
+        "role": "index"
+      },
+      {
+        "symbol": "HYG",
+        "price_at_design": 79.15,
+        "role": "credit_tell"
+      },
+      {
+        "symbol": "EEM",
+        "price_at_design": 67.09,
+        "role": "non_us"
+      },
+      {
+        "symbol": "SLV",
+        "price_at_design": 58.94,
+        "role": "commodity"
+      },
+      {
+        "symbol": "XLF",
+        "price_at_design": 57.72,
+        "role": "sector"
+      },
+      {
+        "symbol": "SOFI",
+        "price_at_design": 17.9,
+        "role": "single_name"
+      },
+      {
+        "symbol": "F",
+        "price_at_design": 14.17,
+        "role": "single_name"
+      }
+    ],
+    "watchlist_only": [
+      {
+        "symbol": "GLD",
+        "price_at_design": 402.16,
+        "restriction": "$1-wide strikes only"
+      }
+    ]
+  },
+  "risk_limits": {
+    "max_risk_per_position_usd": 150.0,
+    "max_concurrent_convexity_positions": 3,
+    "max_total_convexity_at_risk_usd": 450.0,
+    "max_new_positions_per_week": 2,
+    "daily_loss_limit_usd": 150.0,
+    "weekly_loss_limit_usd": 225.0,
+    "drawdown_circuit_breaker_pct": 0.15,
+    "drawdown_halt_days": 30,
+    "drawdown_halt_scope": "convexity_only_core_untouched",
+    "correlation_cap_same_direction": 2,
+    "correlated_groups": [
+      [
+        "SPY",
+        "QQQ",
+        "IWM"
+      ]
+    ],
+    "max_annual_refill_pct_of_year_start_equity": 0.2
+  },
+  "cadence": {
+    "daily_scan_et": "09:45",
+    "never_trade_the_open": true,
+    "open_avoidance_rationale": "First 15 minutes carry the widest spreads of the day (friction constraint C4).",
+    "daily_budget_check_et": "15:50",
+    "ratchet_click_et": "friday 15:45",
+    "monthly_resize": "first_session_of_month"
+  },
+  "pre_trade_checklist": [
+    "setup conditions fully met (no partial credit)",
+    "underlying passes all liquidity filters",
+    "spread bid/ask <= 10% of mid right now",
+    "max loss <= $150",
+    "position count after entry <= 3",
+    "total sleeve risk after entry <= $450",
+    "correlation cap not breached",
+    "entries this week <= 2",
+    "not in LOCKDOWN; >= 2 day trades available",
+    "not in drawdown halt",
+    "no earnings before exit date (CB only)",
+    "DTE between 30 and 45",
+    "GTC target and stop ready to place on fill"
+  ],
+  "checklist_rule": "Any unchecked box is a NO TRADE. Not a smaller trade -- a no trade.",
+  "falsification": {
+    "min_closed_trades_before_judging": 60,
+    "abandon_if_hit_rate_below": 0.43,
+    "abandon_if_avg_friction_pct_of_debit_above": 0.08,
+    "abandon_if_underperforms_core_risk_adjusted_over": "1 year",
+    "correct_action_on_falsification": "stop trading convexity and hold core; do NOT tune parameters until the backtest looks better"
+  },
+  "impossible_goal_note": {
+    "requested": "2x daily",
+    "compounded_1yr": "2^252 = 7.2e75, exceeds all world financial assets (~1e15) by ~60 orders of magnitude",
+    "sessions_to_exceed_world_assets_from_1500": 60,
+    "blocked_by": "PDT rule caps this account at 3 day trades per 5 business days; daily doubling needs ~5/week",
+    "real_doubling_timelines": {
+      "15pct_yr": "5.0 years",
+      "30pct_yr": "2.6 years",
+      "50pct_yr": "1.7 years"
+    }
+  },
+  "disclaimer": "Not financial advice. Specification only. No trades placed. All expectancy figures are illustrative calculations from assumed hit rates, not backtested results.",
+  "simulation": {
+    "script": "sim/ratchet_sim.py",
+    "paths": 20000,
+    "sessions": 252,
+    "ratchet_p_ruin_all_scenarios": 0.0,
+    "ratchet_worst_5th_pct_usd": 1027,
+    "doubler_p_ruin_held_to_expiry": 1.0,
+    "doubler_p_ruin_with_stop_losses": 1.0,
+    "doubler_median_sessions_to_ruin_with_stops": 13,
+    "doubler_arithmetic_edge_with_stops": 0.005,
+    "doubler_geometric_edge_with_stops": -0.213,
+    "key_finding": "A full-size daily bet with a FLAT arithmetic edge still ruins 100% of the time, because volatility drag makes its geometric return -21%/trade. Sizing, not skill, is what defeats this.",
+    "caveat": "Assumptions, not backtests. No historical validation of CB or PED filters was performed."
+  }
+}
