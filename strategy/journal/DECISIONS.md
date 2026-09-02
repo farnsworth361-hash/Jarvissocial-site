@@ -9,6 +9,45 @@ Newest entries at the top. Prices are as-of their timestamp.
 
 ---
 
+## 2026-09-02 — Daily scan automation: rolling window, NOT a cron routine
+
+**Do not "fix" this by converting it to a recurring cron routine. That was tried
+and it silently does not work.**
+
+A recurring routine was created (`45 19 * * 1-5`, weekdays 15:45 ET) and the
+API returned:
+
+> *this trigger stores no MCP connectors, so the sessions it fires will run
+> without connector (`mcp__<server>__*`) tools*
+
+A scan session without connector tools cannot reach Robinhood. It would have
+woken every weekday, found no market data, and done nothing — while appearing
+in the trigger list as healthy coverage. **An automation that fails silently is
+worse than none, because it removes the prompt to check.** The routine was
+deleted.
+
+**Working mechanism: a self-maintaining rolling window.** Each scan, as its
+first step, calls `list_triggers` and ensures a scan exists for each of the next
+**5 trading days**, creating any that are missing via `send_later`. These fire
+into the existing session and carry its tools.
+
+Properties worth keeping:
+- **Idempotent** — it checks before creating. Duplicate scans on one day could
+  double-enter a position, so the check is not optional.
+- **Self-healing** — a 5-day buffer means several consecutive runs can fail
+  before coverage lapses, and any single successful run restores the full
+  window.
+- **Holiday-aware** — the prompt requires verifying the market was open and
+  skipping holidays. Labor Day (Mon Sep 7 2026) is named explicitly.
+- **DST-aware** — 15:45 ET is 19:45 UTC under EDT and 20:45 UTC under EST. The
+  prompt carries both; the switch is in November.
+
+Schedule maintenance is embedded in the Thursday (`trig_0177cLpLKQnnBGNStzK5uDdi`)
+and Tuesday (`trig_016rp6J5k7on7Q7dNuNL3z1d`) prompts, and propagates because
+each created scan reuses the same prompt text.
+
+---
+
 ## 2026-09-02 — Convexity universe expanded; scan schedule set
 
 **Added to the Convexity sleeve:** NVDA (primary high-beta) and PLTR
