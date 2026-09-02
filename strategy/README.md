@@ -13,6 +13,9 @@ Not derived from any existing published model or third-party system.
 | [`ratchet_rules.json`](ratchet_rules.json) | Machine-readable rulebook for the agent to enforce |
 | [`sim/ratchet_sim.py`](sim/ratchet_sim.py) | 20,000-path Monte Carlo backing the claims in §7 |
 | [`sim/RESULTS.txt`](sim/RESULTS.txt) | Committed output of that simulation |
+| [`journal/DECISIONS.md`](journal/DECISIONS.md) | Decision log — every trade **and every declined signal** |
+| [`journal/trades.csv`](journal/trades.csv) | Machine-readable trade records |
+| [`journal/stats.py`](journal/stats.py) | Computes the §10 abandonment metrics from the journal |
 
 Run the simulation with `python3 sim/ratchet_sim.py` (pure stdlib, no deps).
 
