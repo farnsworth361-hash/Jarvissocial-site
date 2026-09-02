@@ -1,6 +1,6 @@
 {
   "strategy": "RATCHET",
-  "version": "1.1",
+  "version": "1.2",
   "designed": "2026-09-02",
   "account": {
     "label": "Agentic",
@@ -298,13 +298,19 @@
     "single_two_leg_spread_order": true,
     "legging_in_prohibited": true,
     "limit_at_mid": true,
-    "max_price_walk_usd": 0.02,
+    "max_price_walk_usd": null,
     "walk_step_usd": 0.01,
     "walk_interval_seconds": 30,
     "if_unfilled_stand_down": true,
     "place_gtc_exits_immediately_on_fill": true,
     "no_trading_first_15_minutes": true,
-    "rationale": "Strike choice moves break-even hit rate 13 points; order type moves it nearly as much. Execution IS the strategy at $1,500."
+    "rationale": "Strike choice moves break-even hit rate 13 points; order type moves it nearly as much. Execution IS the strategy at $1,500.",
+    "max_price_walk": "ONE TICK beyond mid",
+    "tick_by_chain": {
+      "SPY_and_penny_chains": 0.01,
+      "single_names_above_$3.00": 0.05
+    },
+    "walk_rule_correction_v1_2": "v1.1 said 'walk at most $0.02'. Single-name chains tick in $0.05 above $3.00, so $0.02 is unexpressible. Corrected to one tick."
   },
   "spy_only_module": {
     "doc": "SPY-MODULE.md",
@@ -372,5 +378,55 @@
     "trend_pullback": "regime + washout PASS; trigger pending today close",
     "caution": "The two setups firing together are not independent confirmations \u2014 both read the same quiet tape. Size as ONE position.",
     "orders_placed": "none"
+  },
+  "high_beta_module": {
+    "doc": "HIGH-BETA-MODULE.md",
+    "analysis": "sim/highbeta_compare.py",
+    "key_finding": "Delta-matched 30-delta verticals have ~21-22% probability of profit across IV from 10.7% (SPY) to 71.4% (MSTR). Higher IV does NOT improve win odds \u2014 it is already in the price. What improves is reward:risk and the target as a fraction of max profit.",
+    "cost": "Single names tick in $0.05 vs SPY pennies. Break-even hit rate rises from 34.3% to ~38.6-39.4% on a patient one-tick fill, and to 47-64% if you cross the spread.",
+    "universe": {
+      "SPY": {
+        "iv": 0.107,
+        "rr": 2.45,
+        "combined_oi": 26329,
+        "status": "active",
+        "role": "index anchor, tightest execution"
+      },
+      "NVDA": {
+        "iv": 0.325,
+        "rr": 3.08,
+        "combined_oi": 65926,
+        "status": "active",
+        "role": "primary high-beta"
+      },
+      "PLTR": {
+        "iv": 0.462,
+        "rr": 2.92,
+        "combined_oi": 7499,
+        "status": "active",
+        "role": "secondary high-beta"
+      },
+      "TSLA": {
+        "iv": 0.424,
+        "rr": 3.17,
+        "combined_oi": 4962,
+        "status": "watchlist",
+        "reason": "ask size 2 / bid size 3 \u2014 book too thin to exit under stress"
+      },
+      "MSTR": {
+        "iv": 0.714,
+        "rr": 3.55,
+        "combined_oi": 9054,
+        "status": "watchlist",
+        "reason": "22.7% crossing cost, 63.6% break-even"
+      }
+    },
+    "structural_changes": {
+      "setup_b_revived": "Post-Earnings Drift can fire again on single names; it never could on SPY. Restores a second uncorrelated return driver.",
+      "earnings_now_binding": "Every single-name entry MUST verify the earnings date falls after the planned exit. Pre-trade check, not monitoring.",
+      "correlation": "SPY and NVDA are partially correlated \u2014 the max-2-same-direction cap applies across the pair, not to each separately.",
+      "gap_risk": "Single names gap harder than an index. The -50% stop is a resting order, not a guarantee."
+    },
+    "frequency_unchanged": "Still max 2 entries/week. Frequency multiplies friction; volatility does not."
   }
 }

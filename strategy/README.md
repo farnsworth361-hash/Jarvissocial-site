@@ -10,6 +10,7 @@ Not derived from any existing published model or third-party system.
 |---|---|
 | [`RATCHET.md`](RATCHET.md) | The full specification (v1.1). Start here. |
 | [`SPY-MODULE.md`](SPY-MODULE.md) | SPY-only adaptation, live calibration, and two corrections to the base spec |
+| [`HIGH-BETA-MODULE.md`](HIGH-BETA-MODULE.md) | Adds NVDA and PLTR; why higher IV does not improve your odds |
 | [`ratchet_rules.json`](ratchet_rules.json) | Machine-readable rulebook for the agent to enforce |
 | [`sim/ratchet_sim.py`](sim/ratchet_sim.py) | 20,000-path Monte Carlo backing the claims in §7 |
 | [`sim/RESULTS.txt`](sim/RESULTS.txt) | Committed output of that simulation |
