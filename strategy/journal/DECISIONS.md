@@ -83,7 +83,52 @@ observer is not a strategy.
 
 ---
 
-## 2026-09-03 — Core sleeve entry (SCHEDULED)
+## 2026-09-03 — Core sleeve entry: FILLED (38 minutes late)
+
+**FILLED.** Order `6a997f6a-f245-47fb-bdf5-470ad15a7673`, `placed_agent: agentic`.
+
+| | |
+|---|---|
+| Filled | **1.367545 SPY @ $767.799** |
+| Amount | **$1,050.00** |
+| Fees | $0.00 |
+| Fill time | 2026-09-03 14:08:42.854 UTC (10:08:42 ET) |
+| 09:30 opening print | **$767.88** |
+| Fill vs open | **−$0.081/share, i.e. $0.11 BETTER** |
+| Remaining cash | **$450.00** (the Convexity sleeve) |
+
+### The order was late, and that is the entry that matters here
+
+The trigger fired on time at 13:30:43 UTC, but this session's worker process
+restarted mid-turn and the order was never submitted. The account sat at
+$1,500 in cash with zero orders for 38 minutes while believing itself
+invested.
+
+**It was caught by the 14:00 UTC follow-up check-in** — the one scheduled
+specifically to verify the fill rather than assume it, with an explicit
+instruction that a missed order is a real failure and must not be re-armed
+silently. That safety net is the only reason this was noticed within the
+hour instead of at the 15:45 scan or later.
+
+**The delay cost nothing, and that was luck, not skill.** SPY opened at
+$767.88, ran to an intraday high of $770.04 at 13:52 UTC, then came back to
+$767.7 by the time the order went in. Filling at $767.799 was 11 cents
+better than the open. Had the session recovered twenty minutes earlier it
+would have paid ~$770 — about **$3.06 worse** on this position size. The
+outcome was a coin flip; the process failure was real regardless of which
+way the coin landed.
+
+### Lesson recorded
+
+A fire-and-forget order trigger is not sufficient on its own. **Every
+order-placing trigger needs a separate verification check-in behind it**,
+scheduled after the order is due, whose job is to confirm the fill actually
+exists rather than trust that the placing turn completed. That pattern is
+already in place for this order and should be kept for every future one.
+
+---
+
+## 2026-09-03 — Core sleeve entry (as scheduled, superseded by the entry above)
 
 **Scheduled:** 09:30 ET (market open) via `trig_01XARL14T3fZ1wm12z1aY6nZ`.
 **Action:** BUY SPY, market, `dollar_amount` = 70% of equity (~$1,050), regular
@@ -111,7 +156,7 @@ in extended and overnight sessions. After the 16:00 close the only alternative
 was a whole-share limit order in the overnight book — 1 share ≈ $764.50, which
 is 51% of the account instead of 70%, at a wider spread. Wrong size, worse fill.
 
-**Outcome:** _pending_
+**Outcome:** filled 38 minutes late — see the entry above.
 
 ---
 
