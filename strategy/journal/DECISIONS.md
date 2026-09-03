@@ -83,6 +83,59 @@ observer is not a strategy.
 
 ---
 
+## 2026-09-03 — Close scan: NO TRADE. One genuine band break DECLINED.
+
+Near-close marks (15:47 ET). Bands are the Sep 2 values; today's bar had not
+yet settled into the series.
+
+| | Close | 20d upper | Width | Yest. vs midline | Verdict |
+|---|---|---|---|---|---|
+| SPY | $773.23 (+1.06%) | **$773.96** | **2.26%** | 0.02% | ARMED, missed by $0.73 |
+| NVDA | $229.08 (+2.08%) | $227.61 | 9.60% | **3.33%** | **DECLINED** |
+| PLTR | $183.07 (**+8.03%**) | $184.87 | 15.54% | — | no setup |
+
+### NVDA broke its band and was declined anyway
+
+This is the entry worth reading. NVDA closed at $229.08 against a 20-day
+upper band of $227.61 — **a real break, unambiguously outside the band.**
+It was not taken, because Compression Break is not a breakout setup. It is a
+*compression* setup that happens to enter on a break, and NVDA failed both
+compression preconditions:
+
+- **Price within 2% of the midline before the break — FAILED.** NVDA closed
+  Sep 2 at $224.41 against a $217.18 midline, already **3.33%** above it. The
+  move was a continuation of an existing trend, not an expansion out of a
+  coiled range.
+- **BB width in the bottom 20% — FAILED.** Width was **9.60%**, roughly
+  normal for a name carrying 32.5% IV. Nothing was compressed.
+
+Buying optionality here would be paying for a move that had already started,
+in a name that was never quiet. That is the opposite of the setup's thesis.
+
+### PLTR +8.03% is not a signal
+
+An 8% single-day move invites a trade. It qualifies for nothing:
+- Inside its bands ($183.07 vs $184.87 upper) — no break at all.
+- BB width 15.54% — not compressed.
+- **Not post-earnings.** `get_earnings_calendar` over the trailing 7 days
+  shows no PLTR report, so Setup B cannot apply. A large move is not evidence
+  of a print, and the calendar was checked rather than assumed.
+
+### SPY remains the live one
+
+Closed **$0.73** below its trigger. Preconditions are excellent: BB width
+2.26% (near the 1-year low), and Sep 2's close sat **0.02%** off the midline
+— as clean a coil as the setup describes. It needs a close above roughly
+$773.96, and today's large bar will widen the band and raise that threshold
+for tomorrow.
+
+**Trend Pullback: BLOCKED on all three names.** NFP prints tomorrow
+(Fri Sep 4, 8:30 ET), one session out, inside the 2-session event filter.
+
+**Day-trade budget: 3 of 3 available. No LOCKDOWN.**
+
+---
+
 ## 2026-09-03 — Core sleeve entry: FILLED (38 minutes late)
 
 **FILLED.** Order `6a997f6a-f245-47fb-bdf5-470ad15a7673`, `placed_agent: agentic`.
