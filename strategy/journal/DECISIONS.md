@@ -83,6 +83,65 @@ observer is not a strategy.
 
 ---
 
+## 2026-09-03 — STRATEGY CHANGE: rotate to all-options, Core sold
+
+**Directed by the account holder**, after being shown the consequences:
+1. "All options, sell the shares."
+2. "Just buy a SPY spread now, next session" — skip the signal for this entry.
+
+Scheduled for Fri 2026-09-04 09:45 ET (`trig_017voi57zqNQU5uhbF94ddcD`), with
+a verification check-in at 10:20 ET behind it
+(`trig_01MYDgzP4oiZM8XLX4WAuXXi`).
+
+### What this does to the strategy
+
+**The ratchet is now inoperative.** The weekly click sweeps Convexity profits
+*into* Core. With no Core, there is nothing to sweep into and nothing to
+refill from. The mechanism the strategy is named for — the thing that made
+bet size track banked equity rather than recent P&L — stops running. What
+survives is the entry rules and the position caps, not the compounding
+structure.
+
+**P(ruin) is no longer 0%.** Every simulation showing a zero ruin probability
+depended on a 70% buy-and-hold sleeve that cannot go to zero. Removing it
+moves the account toward the distribution modelled as "ALL-IN" in
+`sim/three_month_target.py`, which is a materially different shape. The
+position caps still bound each individual trade; they do not reproduce what
+Core was doing.
+
+This is recorded, not argued. The holder was shown the ruin figures, the
+three-month distributions, and the sizing-beats-skill result before choosing,
+and reaffirmed. It is their account and their call.
+
+### What was deliberately NOT changed
+
+**Per-position risk stays at $150, max 3 concurrent, max 2 entries/week.**
+The holder asked to move *capital* into options. They did not ask to raise
+the per-position cap, and raising it is a separate decision worth roughly 3x
+the risk per trade. Leaving it at $150 means most of the ~$1,507 will sit in
+cash until setups arise — which is the honest consequence of "more capital
+available for options" without "bigger bets," and the holder has been told
+the cap can be raised on request.
+
+### Two things that happen to work in the holder's favour
+
+- **NFP prints at 08:30 ET, one hour before the open.** A Friday-open entry
+  is therefore POST-event: the number is already in the price and IV has
+  already repriced. This is not buying into a catalyst.
+- **Selling Friday is not a day trade.** The shares were bought Thursday
+  2026-09-03, so the round trip spans two sessions. The 3-per-5 budget is
+  untouched.
+
+### Entry without a signal
+
+This one entry bypasses the setup filters at the holder's explicit
+direction. It should be logged in `trades.csv` like any other trade, but
+flagged as signal-less in the notes column — otherwise it will contaminate
+the §10 hit-rate statistics, which are meant to measure whether the *entry
+filters* work. A trade taken without a filter says nothing about the filter.
+
+---
+
 ## 2026-09-03 — Close scan: NO TRADE. One genuine band break DECLINED.
 
 Near-close marks (15:47 ET). Bands are the Sep 2 values; today's bar had not
