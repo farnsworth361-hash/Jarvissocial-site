@@ -26,6 +26,21 @@ even read-only, without an explicit request. There is no account nicknamed
 "Claude" — the holder confirmed on 2026-09-03 that "Agentic" is the one they
 mean. Confirm the account and buying power at the start of every session.
 
+**AUTHORITY — FIRE WITHIN THE RAILS (set 2026-09-04).** When every rail passes,
+place the order. Do not wait for per-order approval; report the fill afterwards.
+This resolves the conflict with the withdrawn 0DTE framework's "never place an
+order I haven't approved" — **that clause is dead.** Still needs an explicit
+instruction: any other account, selling Core, anything that is not a debit
+vertical on a whitelisted name, or any change to the rails themselves. Authority
+is to act *inside* the rails, never to relax one — a failing gate is still a
+no-trade day.
+
+**SIZING — SIZE EVERY ENTRY TO THE CAP (set 2026-09-04).** Take the largest
+whole number of contracts whose total debit is ≤ $150. Never default to 1
+contract when 2 or 3 fit under the cap. If one contract exceeds $150, narrow the
+width; if it still exceeds, stand down. Check bid/ask **size** on both legs
+against the contract count, not just open interest.
+
 The full specification is in `strategy/`. Start at `strategy/README.md`.
 Summary:
 
@@ -33,8 +48,8 @@ Summary:
   trade. Currently **1.367545 SPY**. The holder considered rotating Core into a
   tech fund on 2026-09-03 and decided against it — **Core stays in SPY.**
 - **Convexity sleeve (30%, $450 charter):** debit verticals only, 30–45 DTE,
-  ~30 delta long leg, **$5 strike grid**, ≤$150 per position, max 3 concurrent,
-  max 2 entries per week.
+  ~30 delta long leg, **$5 strike grid**, ≤$150 per position **and sized to that
+  cap**, max 3 concurrent, max 2 entries per week.
 - **Universe:** SPY, NVDA, PLTR. TSLA and MSTR are watchlist only.
 - **Setups:** Compression Break, Trend Pullback, Post-Earnings Drift. All fire
   on a **close**, never intraday.

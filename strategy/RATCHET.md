@@ -1,4 +1,4 @@
-# RATCHET v1.1
+# RATCHET v1.3
 
 **An original trading strategy built exclusively for Robinhood account ••••8464 ("Agentic").**
 
@@ -7,7 +7,9 @@ strategy. Every rule below is derived from the four binding constraints this
 specific account actually operates under.
 
 - **Author:** Claude Code, for farnsworth361
-- **Designed:** 2026-09-02 · **v1.1** corrects the strike-grid rule (§6)
+- **Designed:** 2026-09-02 · **v1.1** corrects the strike-grid rule (§6) ·
+  **v1.3** (2026-09-04) grants fire-within-the-rails authority and sizes every
+  entry to the $150 cap (§6 amendment)
 - **SPY-only adaptation:** see `SPY-MODULE.md`
 - **Account snapshot at design time:** limited margin individual · options level 3 ·
   $1,500.00 total value, 100% cash · 0 equity positions · 0 option positions ·
@@ -361,6 +363,48 @@ at this size). Anything failing the liquidity table above.
 | Correlation cap | Max 2 same-direction positions on correlated names | SPY/QQQ/IWM count as **one** underlying |
 | Day-trade floor | **≥ 1 available at all times** | §4 LOCKDOWN trigger |
 
+### ⚠ v1.3 amendment (2026-09-04) — authority and sizing
+
+Two changes at the holder's direction. Neither moves a rail; both change how the
+rails are used.
+
+**1. Authority: fire within the rails.** No per-order approval. When every box in
+the §9 checklist is ticked, the order goes in and the fill is reported
+afterwards. This retires the "never place an order I haven't approved" clause
+inherited from the withdrawn 0DTE framework, which had been left unresolved.
+Still gated on an explicit instruction: another account, selling Core, any
+instrument that is not a debit vertical on a whitelisted name, or any change to
+the rails themselves. **Authority is to act inside the rails, never to relax
+one.** A failing gate is still a no-trade day, and standing down never needs
+permission.
+
+**2. Sizing: size every entry to the cap.** The rule was silent on contract
+count, which in practice meant defaulting to one contract. It now reads:
+
+> Take the **largest whole number of contracts whose total debit is ≤ $150**.
+> `contracts = floor(15000 / debit_per_contract_in_cents)`.
+> If one contract exceeds the cap, narrow the width. If the tightest sane width
+> still exceeds it, **stand down** — never exceed the cap to take the trade.
+
+On SPY this usually changes nothing: a $5-wide 30-delta vertical runs ~$1.45, so
+one contract is already $145 of the $150 and a second would be refused. It bites
+on the cheaper single-name chains, where a $0.70 debit was previously taken as
+one $70 lot and is now two lots at $140.
+
+**The cost of the change, stated plainly.** Sizing to the cap scales wins and
+losses by the same factor. It raises the sleeve's expected dollar outcome and its
+variance together; it does not improve the odds of any individual trade, and the
+break-even hit rate in §7 is unchanged. Two things do get worse and must be
+checked:
+
+- **Fill quality.** Bid/ask **size** must be ≥ the contract count on *both* legs.
+  A 3-lot into a 1-up market fills worse than a 1-lot and can give back more than
+  the extra size wins. Open interest is not a substitute for displayed size.
+- **Correlation.** Three positions at the full $150 is the entire $450 sleeve
+  deployed, and the universe (SPY, NVDA, PLTR) is long-beta throughout. The
+  max-2-same-direction cap spanning SPY/NVDA is what keeps that from becoming one
+  levered bet — it matters more at full size than it did at partial size.
+
 ---
 
 ## 7. What this actually returns — the honest math
@@ -512,6 +556,8 @@ enough to do the analysis from scratch.
 - [ ] Underlying passes all liquidity filters in §6
 - [ ] Spread bid/ask ≤ 10% of mid **right now**, not on average
 - [ ] Max loss ≤ $150
+- [ ] **Contracts = the most that fit under $150** (v1.3 — not a default of 1)
+- [ ] **Bid/ask size ≥ contract count on both legs** (v1.3 — not just OI)
 - [ ] Position count after entry ≤ 3
 - [ ] Total sleeve risk after entry ≤ $450
 - [ ] Correlation cap not breached (SPY/QQQ/IWM = one underlying)
@@ -522,7 +568,9 @@ enough to do the analysis from scratch.
 - [ ] 30–45 DTE
 - [ ] GTC target and stop ready to place immediately on fill
 
-Any unchecked box is a no-trade. Not a smaller trade — a no-trade.
+Any unchecked box is a no-trade. Not a smaller trade — a no-trade. Under the
+v1.3 authority grant this checklist is the *only* thing standing between a signal
+and a live order, which makes running it honestly the whole of the risk control.
 
 ---
 

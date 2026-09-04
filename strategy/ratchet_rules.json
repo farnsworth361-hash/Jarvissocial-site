@@ -1,7 +1,8 @@
 {
   "strategy": "RATCHET",
-  "version": "1.2",
+  "version": "1.3",
   "designed": "2026-09-02",
+  "amended": "2026-09-04",
   "account": {
     "label": "Agentic",
     "account_number_masked": "****8464",
@@ -225,8 +226,44 @@
       "MSTR"
     ]
   },
+  "authority": {
+    "mode": "fire_within_the_rails",
+    "granted": "2026-09-04",
+    "per_order_approval_required": false,
+    "meaning": "Place the order when every rail passes, without waiting for a confirmation from the holder. Report the fill after the fact in the daily report and the journal.",
+    "supersedes": "The 'never place an order I haven't approved' clause from the SPY 0DTE framework of 2026-09-03. That framework was withdrawn the same day; this resolves the leftover conflict explicitly.",
+    "still_requires_explicit_instruction": [
+      "any trade in an account other than ****8464",
+      "selling any part of the Core sleeve",
+      "any instrument that is not a debit vertical on a whitelisted underlying",
+      "any change to the rails themselves (cap, concurrency, weekly entry count, universe)"
+    ],
+    "standing_down_is_always_permitted": "A failing rail means no trade. Full authority is authority to act inside the rails, never authority to relax one."
+  },
+  "position_sizing": {
+    "rule": "size_to_the_cap",
+    "set": "2026-09-04",
+    "directive": "Take the LARGEST whole number of contracts whose total debit is <= max_risk_per_position_usd. Do not default to 1 contract when 2 or 3 fit under the cap.",
+    "formula": "contracts = floor(max_risk_per_position_usd / (debit_per_contract * 100))",
+    "floor": 1,
+    "if_one_contract_exceeds_cap": "Narrow the width until it fits. If the tightest sane width still exceeds the cap, STAND DOWN. Never exceed the cap to take the trade.",
+    "liquidity_check_scales_with_size": "Bid/ask SIZE must be >= the contract count on BOTH legs, not just open interest. A 3-lot into a 1-up market fills worse than a 1-lot, and gives back more than the extra size wins.",
+    "worked_examples": {
+      "spy_5_wide_30_delta": "debit ~$1.45 -> $145/contract -> 1 contract ($145 of the $150 cap). Already at the cap; a 2nd contract would be $290 and is refused.",
+      "cheaper_single_name": "debit $0.70 -> $70/contract -> 2 contracts = $140, where the old default would have taken $70. This is where the rule actually changes behaviour."
+    },
+    "what_this_does_not_change": [
+      "the $150 per-position cap",
+      "the 3-concurrent cap",
+      "the 2-entries-per-week cap",
+      "the $450 sleeve charter",
+      "any entry condition - size is decided AFTER a setup has passed every gate, never to justify taking one"
+    ],
+    "expectancy_note": "Sizing to the cap scales wins and losses by the same factor. It raises the sleeve's variance and its expected dollar outcome together; it does not improve the odds of any individual trade. The rails, not the sizing, are what keep this bounded."
+  },
   "risk_limits": {
     "max_risk_per_position_usd": 150.0,
+    "size_each_entry_to_the_cap": true,
     "max_concurrent_convexity_positions": 3,
     "max_total_convexity_at_risk_usd": 450.0,
     "max_new_positions_per_week": 2,

@@ -343,6 +343,58 @@ The NFP decline above is the first exercise of exactly that.
 
 ---
 
+## 2026-09-04 · Authority resolved and sizing raised to the cap — RATCHET v1.3
+
+The holder, asked to break the tie between two of their own standing
+instructions, chose **"fire within the rails"** and added **"place more on the
+orders, like the max amount."**
+
+**What was in conflict.** The RATCHET grant of 2026-09-02 said "full authority
+within the rails." The SPY 0DTE framework of 2026-09-03 said "never place an
+order I haven't approved." The 0DTE framework was withdrawn the same day it was
+imposed, but that clause was never explicitly retired, so both readings survived
+into 2026-09-04. It is now settled: **no per-order approval.** The fill is
+reported after the fact.
+
+**What changed in sizing.** The rulebook capped a position at $150 but said
+nothing about contract count, which in practice meant one contract. It now takes
+the largest whole number of contracts fitting under $150. On SPY this is usually
+a no-op — a $5-wide 30-delta vertical is already ~$145 for one lot. It bites on
+the cheaper single-name chains.
+
+**What did not change, and was not asked to.** The $150 per-position cap, the
+3-concurrent cap, the 2-entries-per-week cap, the $450 charter, the universe, and
+every entry gate. "Within the rails" was the holder's own framing and is the
+binding half of the instruction. Size is decided *after* a setup has passed every
+gate — never to justify taking one.
+
+**The bear case, recorded before the first fill rather than after.** Sizing to
+the cap scales wins and losses by the same factor. It raises the sleeve's
+expected dollar outcome and its variance together and improves the odds of
+nothing. Two specific ways it can be worse than it looks:
+
+1. **Fill quality degrades with size.** Displayed bid/ask size, not open
+   interest, is the binding constraint. A 3-lot into a 1-up market can give back
+   more in slippage than the extra two lots win. The checklist now requires size
+   ≥ contract count on both legs.
+2. **Full deployment is one correlated bet.** Three positions at $150 is the
+   entire $450 sleeve, and SPY/NVDA/PLTR are long-beta throughout. The
+   max-2-same-direction cap spanning SPY and NVDA is the only thing preventing
+   that, and it matters more at full size than it did at partial size.
+
+The realistic effect on the account: this raises the sleeve from a rarely-used
+$450 to a fully-usable $450. It does not change the ~+22%/yr simulated
+expectation of the strategy, and it does not change the break-even hit rate of
+34.3%. The holder was told this when they gave the instruction and gave it
+anyway; it is their call and it is inside the rails they set.
+
+**No order was placed on this instruction.** It arrived at 00:17 ET with the
+market closed and, more importantly, RATCHET setups fire on a **close**, never on
+an instruction. The Friday 2026-09-04 15:45 ET scan is the first run operating
+under v1.3. If no setup passes, the correct outcome is still no trade.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
