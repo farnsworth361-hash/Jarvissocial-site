@@ -395,6 +395,73 @@ under v1.3. If no setup passes, the correct outcome is still no trade.
 
 ---
 
+## 2026-09-04 · NO TRADE — first scan under v1.3, nothing passed
+
+NFP day. First run with fire-within-the-rails authority and size-to-the-cap
+active. Both were available and neither was used, because no setup fired.
+
+**Prices at 15:45 ET:** SPY 769.94 (−0.42%), NVDA 230.12 (+0.73%),
+PLTR 173.94 (−4.71%). Account $1,502.97 — Core 1.367545 SPY at $1,052.97,
+cash $450, zero option positions, 3 of 3 day trades available.
+
+**Bands, recomputed with today's price in the 20-day window:**
+
+| | lower | mid | upper | 15:45 | outside? | vs mid |
+|---|---|---|---|---|---|---|
+| SPY | 760.40 | 769.04 | 777.68 | 769.94 | no | +0.12% |
+| NVDA | 208.15 | 220.07 | 231.99 | 230.12 | no | +4.57% |
+| PLTR | 166.85 | 176.90 | 186.95 | 173.94 | no | −1.67% |
+
+**Failing conditions, per name:**
+
+- **SPY — Compression Break: no band break.** 769.94 sits inside
+  760.40–777.68, near the midline. It passes the 2%-from-midline proximity
+  gate; it simply has not broken out.
+- **NVDA — Compression Break: no band break on the governing band, and the
+  midline-proximity gate fails.** Worth recording carefully, because the two
+  readings disagree. Against the *prior* session's band (upper 229.30) NVDA at
+  230.12 looks like an upside break. Against the band recomputed *including
+  today's bar* — the correct test, since today's price enters the 20-day mean
+  and standard deviation — the upper band is 231.99 and NVDA is inside it. The
+  break is an artifact of testing a price against a band that does not contain
+  it. Independently, the pre-break bar (Sep 3, 228.45) sat **+4.73%** above its
+  midline of 218.14 against a **≤2%** gate, so the setup would have been
+  declined either way. This is the same condition that disqualified NVDA on
+  2026-09-03 — twice now, for the same reason: NVDA is extended, not compressed,
+  and a break from an extended position is continuation, not a volatility
+  expansion off a coiled base.
+- **PLTR — Compression Break: no band break.** The −4.71% move is the largest
+  of the day and looks like a candidate, but PLTR closed Sep 3 at 182.53,
+  essentially *on* its upper band of 182.59. Today's fall took it from the top
+  of the band toward the midline and stopped well short of the lower band at
+  166.85. That is mean reversion inside the band, which is the opposite of the
+  setup. Direction would also have been unreadable.
+- **All names — Trend Pullback: BLOCKED.** NFP printed this morning, 0 sessions
+  out, inside the 2-session event window.
+- **NVDA, PLTR — Post-Earnings Drift: outside the window.** Verified against
+  the earnings calendar rather than inferred from price: NVDA reported
+  **2026-08-26 pm**, which is 6 sessions ago against a 1–3 session window. PLTR
+  has no report in the trailing 14 days (its last was the Aug 3 print behind the
+  Aug 4 +29% gap). PLTR's −4.71% today is a large move with no earnings behind
+  it — exactly the trap the "verify the print, a big move is not evidence of
+  one" rule exists to catch.
+
+**Ratchet click (Friday):** sleeve at exactly $450 cash with no open positions.
+Surplus zero, shortfall zero. **No-op.**
+
+**Note on the new authority.** The first day of unattended order placement was a
+no-trade day, which is the expected case, not a failure of the grant. Authority
+removed the wait between a valid signal and an order; it did not create signals.
+The temptation it introduces is visible in NVDA — a genuine-looking band break
+that two separate gates reject. It was rejected.
+
+**Correction to a level quoted earlier today:** an intermediate read in-session
+described NVDA as breaking its upper band, based on the prior session's band.
+The recomputed band is the governing one and puts it inside. The trade decision
+is unchanged.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
