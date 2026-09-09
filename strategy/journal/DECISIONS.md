@@ -462,6 +462,87 @@ is unchanged.
 
 ---
 
+## 2026-09-08 · OUT-OF-FRAMEWORK · Core liquidated, INTC spread opened by the holder
+
+**This is not a RATCHET trade and must never be counted as one.** Recorded here
+because it emptied the framework.
+
+**What happened, from the order records:**
+
+| time (UTC) | event | placed_agent |
+|---|---|---|
+| 16:52:45 | SPY sold, market, 1.367545 sh @ $767.17 = $1,049.03 | **agentic** |
+| 17:02:32 | INTC 105/110 call spread, 7 @ $1.71 debit — cancelled | user |
+| 17:06:31 | INTC 105/110 call spread, 1 @ $1.81 filled ($181) | user |
+| 17:10:14 | INTC 105/110 call spread, 6 @ $1.86 filled ($1,116) | user |
+| 17:22:31 | GTC closing order, 7 @ $4.00 credit — still resting | user |
+
+The holder confirmed on 2026-09-08 that they placed the INTC orders. The SPY
+liquidation carries `placed_agent: agentic`, meaning it went through an agent
+connection rather than the app — **it was not this session**, and no instruction
+to sell Core was given here. Flagged to the holder; unresolved at time of
+writing. Core-selling is on the v1.3 "requires an explicit instruction" list
+precisely so this cannot happen quietly, and the control did not hold, because
+the actor was not this session.
+
+**The position:** INTC 105/110 call debit spread, 7 contracts, exp 2026-09-11.
+Total debit **$1,297** ($1.853 avg). Max profit $2,203 at INTC ≥ $110; max loss
+the full $1,297 at INTC ≤ $105; break-even $106.85. INTC closed $104.44 that day
+after a +9.0% session — the position was opened at 1:06pm, near the highs, into a
+move that had already happened.
+
+**Every RATCHET rail this breaks:** underlying not in the universe (SPY, NVDA,
+PLTR); $1,297 against a $150 per-position cap (8.6×); 3 DTE against a 30–45 DTE
+rail; 86% of the account in one position against a $450 sleeve charter; and the
+Core sleeve sold to fund it, which the charter forbids outright.
+
+## 2026-09-08/09 · Holder's stop instruction, and how it had to be built
+
+Instruction: **"If the account loses another $250, close the position."** Given
+after being shown the position's odds (~32% of finishing above break-even, ~20%
+above $110) and the fact that it is 86% of the account.
+
+**Translated to a testable trigger.** Account was $1,265.49 = $201.49 cash +
+$1,064 spread. Cash is static, so:
+
+> **Close when the spread mark ≤ $1.16** — position ≤ $814, account ≤ $1,015.49.
+
+**Why it is a monitored stop and not a resting one.** Robinhood does not accept
+stop orders on multi-leg spreads — the API states plainly that only `limit` is
+available with two or more legs, and stop_market/stop_limit are single-leg only.
+There is therefore **no broker-side stop**. The instruction is implemented as
+scheduled check-ins (13:35, 14:50, 16:05, 17:20, 18:35 and 19:45 UTC each
+session) that read the mark and place a closing limit order on breach. Two
+consequences the holder was told about: a gap through the level fills below it,
+and the stop only exists while the check-ins keep firing.
+
+The resting $4.00 GTC target is left in place, and is cancelled first at trigger
+time — a second closing order on the same 7 contracts is rejected while it rests.
+
+**What the stop is actually likely to do.** Spread theta is about −$0.0855 per
+contract per day, ≈ **−$60/day** across 7. INTC at $104.44 is below both strikes,
+so if it simply sits still the spread decays to zero by Friday and **must** pass
+$1.16 on the way — most likely Thursday. So this is a theta stop far more than a
+directional one: it will probably fire because the position ran out of time, not
+because INTC moved against it. That is not an argument against it. Stopped at
+$1.16 the loss is ~$485 and the account lands near $1,013; held to expiry below
+$105 the loss is the full $1,297 and the account lands near $201. **The stop is
+worth roughly $812 in the bad case**, which is the majority of what is left.
+
+**Hard deadline.** Robinhood force-closes these contracts at **2026-09-11 15:30
+ET** (`sellout_datetime` 19:30Z): if INTC settles between $105 and $110 the long
+leg is ITM and exercising 7 contracts needs $73,500 against ~$201 of cash. A
+14:45 ET Friday check-in is armed to surface this 45 minutes ahead, and the 15:45
+ET run is a backstop for a stranded position.
+
+**RATCHET is unfunded and dormant.** No Core sleeve, no $450 charter, ~$201 cash.
+Every scheduled scan now carries an explicit instruction to open nothing, in any
+name, until the holder refunds the account and says so. Nothing about the v1.3
+fire-within-the-rails grant authorises an entry when there are no rails left to
+be inside of.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
