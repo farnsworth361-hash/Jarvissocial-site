@@ -1,0 +1,62 @@
+====================================================================================================
+                            TIME TO RESOLUTION — RATCHET debit verticals                            
+      50,000 paths · entry 44 DTE · forced exit 10 DTE · risk-neutral drift (no edge assumed)       
+====================================================================================================
+
+Position       outcome     share    median    25th    75th   fastest
+----------------------------------------------------------------------------------------------------
+SPY  785/790   target      24.9%      12d      8d     16d       2d
+               stop        71.9%       7d      4d     12d       1d
+               time         3.2%      24d     24d     24d      24d
+----------------------------------------------------------------------------------------------------
+NVDA 240/245   target      31.4%      10d      6d     14d       1d
+               stop        66.5%       7d      4d     12d       1d
+               time         2.1%      24d     24d     24d      24d
+----------------------------------------------------------------------------------------------------
+PLTR 185/190   target      30.3%      10d      7d     15d       1d
+               stop        67.4%       7d      4d     12d       1d
+               time         2.3%      24d     24d     24d      24d
+----------------------------------------------------------------------------------------------------
+
+Days are TRADING days. Multiply by ~1.4 for calendar days.
+
+====================================================================================================
+                                          WHAT THIS MEANS                                           
+====================================================================================================
+Every position resolves within ~24 trading days (~5 weeks calendar).
+There is no open-ended hold: the 10-DTE rule closes it regardless.
+
+The three exits fire on very different clocks:
+
+  LOSERS ARE FAST   — median 7 trading days, 25th pct just 4.
+  WINNERS ARE SLOW  — median 10-12 days; a target needs a sustained
+                      directional move, not a single good session.
+  TIME EXITS ARE RARE — only 2-3% of trades reach 10 DTE untouched.
+
+THE MECHANISM BEHIND THE STOP RATE (the important part):
+
+The stop fires on ~67-72% of trades, and that is mostly NOT the
+underlying moving against you. It is theta.
+
+Hold SPY perfectly FLAT at 765.14 and price the 785/790 vertical at
+10 DTE: it is worth about $0.70. The stop sits at $0.725. So a trade
+that simply goes nowhere decays into its own stop with days to spare.
+
+  -> 'Stop' in this system mostly means DID NOT MOVE IN TIME,
+     not MOVED AGAINST ME.
+
+That is a deliberate property, not a defect: an OTM debit vertical
+that has not moved by the halfway point has usually lost its thesis,
+and cutting it at -50% frees the capital and the slot. But it means
+the loss rate is high and front-loaded by construction, and the
+occasional slow winner has to carry all of them at 2:1.
+
+So the felt experience is: frequent small losses inside the first
+week or two, occasional slower wins, and very little that lingers.
+Judging this in week three is judging noise -- which is exactly why
+section 10 requires 60 closed trades before any verdict.
+
+NOTE ON SCOPE: these are TIMING results. Outcomes are recorded at the
+barrier level, not at the actual value on the crossing day, so this
+simulation should NOT be read as an expectancy estimate. Paths use
+risk-neutral drift, which assumes no edge by construction.

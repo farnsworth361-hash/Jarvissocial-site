@@ -1,0 +1,53 @@
+================================================================================================================
+                      Delta-matched 30-delta $5-wide debit verticals, 2026-10-16 (44 DTE)                       
+================================================================================================================
+Spread              IV    mid $    max P     R:R  tgt %max   comb OI  P(profit)
+----------------------------------------------------------------------------------------------------------------
+SPY  785/790     10.7% $ 145.00 $ 355.00   2.45:1     40.8%    26,329      22.3%
+NVDA 240/245     32.5% $ 122.50 $ 377.50   3.08:1     32.5%    65,926      21.6%
+PLTR 185/190     46.2% $ 127.50 $ 372.50   2.92:1     34.2%     7,499      21.8%
+TSLA 390/395     42.4% $ 120.00 $ 380.00   3.17:1     31.6%     4,962      20.9%
+MSTR 140/145     71.4% $ 110.00 $ 390.00   3.55:1     28.2%     9,054      21.1%
+
+================================================================================================================
+                                       FRICTION — the cost of leaving SPY                                       
+================================================================================================================
+Single-name options quote in $0.05 ticks above $3.00. SPY quotes in
+pennies. That is a floor on how tight their spreads can ever be.
+
+Spread            mid $   cross $  cross %  BE(cross) |   +1 tick   tick %  BE(tick)
+----------------------------------------------------------------------------------------------------------------
+SPY  785/790   $ 145.00 $  146.00     0.7%      34.3% | $  146.00     0.7%     34.3%
+NVDA 240/245   $ 122.50 $  135.00    10.2%      46.9% | $  127.50     4.1%     38.8%
+PLTR 185/190   $ 127.50 $  145.00    13.7%      51.6% | $  132.50     3.9%     38.6%
+TSLA 390/395   $ 120.00 $  145.00    20.8%      61.1% | $  125.00     4.2%     38.9%
+MSTR 140/145   $ 110.00 $  135.00    22.7%      63.6% | $  115.00     4.5%     39.4%
+
+================================================================================================================
+                                                  THE FINDING                                                   
+================================================================================================================
+Look at the P(profit) column. Every one of these sits at 21-22%.
+
+Delta-matching standardises the bet. A 30-delta option is a 30-delta
+option whether the underlying moves 1% a day or 5% a day -- the higher
+IV is already in the price. Buying a 'more volatile' name at the same
+delta does NOT raise your odds of winning. The market is not offering
+free movement.
+
+What DOES change, and is worth having:
+
+  SPY  785/790   target is  40.8% of max profit;  1σ(44d) =   3.7%;  needs  +2.6% (0.70σ)
+  NVDA 240/245   target is  32.5% of max profit;  1σ(44d) =  11.3%;  needs  +7.0% (0.62σ)
+  PLTR 185/190   target is  34.2% of max profit;  1σ(44d) =  16.0%;  needs  +9.2% (0.57σ)
+  TSLA 390/395   target is  31.6% of max profit;  1σ(44d) =  14.7%;  needs  +9.2% (0.63σ)
+  MSTR 140/145   target is  28.2% of max profit;  1σ(44d) =  24.8%;  needs +13.6% (0.55σ)
+
+The $5 width is a far smaller slice of a volatile name's expected move,
+so the debit is cheaper relative to the width and the reward:risk is
+better. NVDA pays 3.08:1 against SPY's 2.45:1, and its +100% target is
+32.5% of max profit versus SPY's 40.8% -- a materially easier bar.
+
+That is the real trade: same win probability, bigger payoff when right,
+bigger loss when wrong, and 4-5 extra points of break-even hit rate
+handed to the market maker in wider ticks. Worth it only if you accept
+the variance -- it is not a free upgrade.

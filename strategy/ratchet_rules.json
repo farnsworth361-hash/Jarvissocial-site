@@ -1,0 +1,481 @@
+{
+  "strategy": "RATCHET",
+  "version": "1.3",
+  "designed": "2026-09-02",
+  "amended": "2026-09-04",
+  "account": {
+    "label": "Agentic",
+    "account_number_masked": "****8464",
+    "type": "limited_margin_individual",
+    "option_level": 3,
+    "equity_at_design": 1500.0,
+    "leverage_available": false,
+    "pdt_restricted": true,
+    "pdt_threshold": 25000.0
+  },
+  "sleeves": {
+    "core": {
+      "target_pct": 0.7,
+      "instruments": [
+        "broad_index_etf"
+      ],
+      "fractional_ok": true,
+      "may_be_sold_to_fund_convexity": false,
+      "rebalance": "monthly"
+    },
+    "convexity": {
+      "target_pct": 0.3,
+      "charter_size_usd": 450.0,
+      "instruments": [
+        "debit_vertical_spread"
+      ],
+      "is_only_sleeve_that_can_zero": true
+    }
+  },
+  "ratchet": {
+    "click_schedule": "friday_1545_ET",
+    "on_surplus": {
+      "condition": "S > S0",
+      "action": "sweep_to_core",
+      "amount": "S - S0",
+      "note": "Profits are removed from the risk sleeve and never re-risked at larger size."
+    },
+    "on_deficit": {
+      "condition": "S < S0",
+      "action": "refill_from_core",
+      "amount": "min(S0 - S, 0.02 * total_equity, annual_refill_budget_remaining)",
+      "max_refill_pct_of_equity_per_week": 0.02,
+      "note": "Losses reload slowly and capped. Revenge sizing is structurally unavailable.",
+      "max_annual_refill_pct_of_year_start_equity": 0.2,
+      "annual_cap_rationale": "The weekly cap limits the RATE of bleed but not the TOTAL. Without an annual budget, 2%/week for 52 weeks could drain Core entirely."
+    },
+    "charter_resize": {
+      "schedule": "monthly_first_session",
+      "formula": "S0 = 0.30 * equity_high_water_mark",
+      "may_decrease": false,
+      "note": "Bet size follows banked equity only. Never unrealized PnL, never conviction."
+    }
+  },
+  "day_trade_budget": {
+    "max_per_rolling_5_business_days": 3,
+    "reserved_for": "exits_only",
+    "may_be_used_for_entries": false,
+    "permitted_exit_reasons": [
+      "same_session_stop_breach",
+      "gap_or_news_thesis_invalidation",
+      "assignment_or_pin_risk_cleanup"
+    ],
+    "minimum_available_floor": 1,
+    "lockdown_trigger": "available_day_trades <= 1",
+    "lockdown_effect": "no_new_convexity_entries; core_unaffected"
+  },
+  "setups": {
+    "compression_break": {
+      "id": "CB",
+      "role": "primary",
+      "thesis": "Volatility mean-reverts and clusters; buy cheap optionality ahead of a statistically due expansion. Direction is read off the break, never forecast.",
+      "entry_conditions": {
+        "rv10_percentile_1y_max": 25,
+        "bb20_width_percentile_1y_max": 20,
+        "atm_iv_rank_max": 30,
+        "max_pct_distance_from_bb20_midline": 0.02,
+        "trigger": "first_daily_CLOSE_outside_20day_band",
+        "intraday_triggers_allowed": false
+      }
+    },
+    "post_earnings_drift": {
+      "id": "PED",
+      "role": "diversifier",
+      "thesis": "A held earnings gap drifts for weeks as institutions reposition. Enter AFTER the IV crush, never before.",
+      "entry_conditions": {
+        "sessions_since_earnings_min": 1,
+        "sessions_since_earnings_max": 3,
+        "min_gap_pct": 0.04,
+        "min_relative_volume": 2.0,
+        "min_gap_retention_pct": 0.6,
+        "consecutive_closes_holding_gap": 2,
+        "post_crush_iv_rank_max": 40
+      }
+    }
+  },
+  "structure": {
+    "type": "debit_vertical_spread",
+    "dte_min": 30,
+    "dte_max": 45,
+    "long_leg_delta_target": 0.3,
+    "short_leg": "one_strike_width_further_otm",
+    "rationale": "Short leg cuts debit 35-45%, converting a 1-position sleeve into a 3-position sleeve and capping theta bleed."
+  },
+  "exits": {
+    "profit_target_pct_of_debit": 1.0,
+    "stop_loss_pct_of_debit": 0.5,
+    "time_exit_dte": 10,
+    "payoff_ratio": "2:1",
+    "break_even_hit_rate": 0.4,
+    "break_even_formula": "p*1.00 - (1-p)*0.50 - 0.10_friction = 0  ->  p = 0.40",
+    "orders_placed": "GTC_immediately_on_fill",
+    "note": "Target is stated in units of DEBIT PAID, not percent of max profit. The two differ and mixing them corrupts all downstream expectancy math."
+  },
+  "universe_filters": {
+    "min_open_interest_at_strike": 1000,
+    "max_spread_bid_ask_pct_of_mid": 0.1,
+    "min_underlying_adv_shares": 5000000,
+    "excluded": [
+      "0DTE",
+      "expirations under 21 DTE at entry",
+      "stocks under $5",
+      "single-name biotech",
+      "anything failing liquidity filters"
+    ],
+    "whitelist": [
+      {
+        "symbol": "SPY",
+        "price_at_design": 765.15,
+        "role": "index"
+      },
+      {
+        "symbol": "QQQ",
+        "price_at_design": 708.62,
+        "role": "index"
+      },
+      {
+        "symbol": "IWM",
+        "price_at_design": 294.08,
+        "role": "index"
+      },
+      {
+        "symbol": "HYG",
+        "price_at_design": 79.15,
+        "role": "credit_tell"
+      },
+      {
+        "symbol": "EEM",
+        "price_at_design": 67.09,
+        "role": "non_us"
+      },
+      {
+        "symbol": "SLV",
+        "price_at_design": 58.94,
+        "role": "commodity"
+      },
+      {
+        "symbol": "XLF",
+        "price_at_design": 57.72,
+        "role": "sector"
+      },
+      {
+        "symbol": "SOFI",
+        "price_at_design": 17.9,
+        "role": "single_name"
+      },
+      {
+        "symbol": "F",
+        "price_at_design": 14.17,
+        "role": "single_name"
+      }
+    ],
+    "watchlist_only": [
+      {
+        "symbol": "GLD",
+        "price_at_design": 402.16,
+        "restriction": "$1-wide strikes only"
+      }
+    ],
+    "strike_grid_rule": "trade the liquid strike grid for the chain ($5 on SPY), never the $1 grid",
+    "width_rule": "width is FREE (max loss on a debit vertical = debit paid, not width); choose width so the debit lands just under the $150 cap",
+    "corrected_in_v1_1": "v1.0 required $1-strike ETFs on the false premise that a $5 width forces $500 max risk. That is a CREDIT-spread number. The old rule also steered into the illiquid grid.",
+    "strike_grid_evidence_spy_2026_10_16": {
+      "785_call": {
+        "bid": 5.07,
+        "ask": 5.08,
+        "spread": 0.01,
+        "open_interest": 13255,
+        "grid": 5
+      },
+      "790_call": {
+        "bid": 3.62,
+        "ask": 3.63,
+        "spread": 0.01,
+        "open_interest": 13074,
+        "grid": 5
+      },
+      "784_call": {
+        "bid": 5.42,
+        "ask": 5.52,
+        "spread": 0.1,
+        "open_interest": 1130,
+        "grid": 1
+      },
+      "787_call": {
+        "bid": 4.48,
+        "ask": 4.57,
+        "spread": 0.09,
+        "open_interest": 743,
+        "grid": 1
+      },
+      "break_even_hit_rate_5_grid": 0.343,
+      "break_even_hit_rate_1_grid": 0.475
+    },
+    "whitelist_convexity_active": [
+      "SPY",
+      "NVDA",
+      "PLTR"
+    ],
+    "whitelist_convexity_watchlist": [
+      "TSLA",
+      "MSTR"
+    ]
+  },
+  "authority": {
+    "mode": "fire_within_the_rails",
+    "granted": "2026-09-04",
+    "per_order_approval_required": false,
+    "meaning": "Place the order when every rail passes, without waiting for a confirmation from the holder. Report the fill after the fact in the daily report and the journal.",
+    "supersedes": "The 'never place an order I haven't approved' clause from the SPY 0DTE framework of 2026-09-03. That framework was withdrawn the same day; this resolves the leftover conflict explicitly.",
+    "still_requires_explicit_instruction": [
+      "any trade in an account other than ****8464",
+      "selling any part of the Core sleeve",
+      "any instrument that is not a debit vertical on a whitelisted underlying",
+      "any change to the rails themselves (cap, concurrency, weekly entry count, universe)"
+    ],
+    "standing_down_is_always_permitted": "A failing rail means no trade. Full authority is authority to act inside the rails, never authority to relax one."
+  },
+  "position_sizing": {
+    "rule": "size_to_the_cap",
+    "set": "2026-09-04",
+    "directive": "Take the LARGEST whole number of contracts whose total debit is <= max_risk_per_position_usd. Do not default to 1 contract when 2 or 3 fit under the cap.",
+    "formula": "contracts = floor(max_risk_per_position_usd / (debit_per_contract * 100))",
+    "floor": 1,
+    "if_one_contract_exceeds_cap": "Narrow the width until it fits. If the tightest sane width still exceeds the cap, STAND DOWN. Never exceed the cap to take the trade.",
+    "liquidity_check_scales_with_size": "Bid/ask SIZE must be >= the contract count on BOTH legs, not just open interest. A 3-lot into a 1-up market fills worse than a 1-lot, and gives back more than the extra size wins.",
+    "worked_examples": {
+      "spy_5_wide_30_delta": "debit ~$1.45 -> $145/contract -> 1 contract ($145 of the $150 cap). Already at the cap; a 2nd contract would be $290 and is refused.",
+      "cheaper_single_name": "debit $0.70 -> $70/contract -> 2 contracts = $140, where the old default would have taken $70. This is where the rule actually changes behaviour."
+    },
+    "what_this_does_not_change": [
+      "the $150 per-position cap",
+      "the 3-concurrent cap",
+      "the 2-entries-per-week cap",
+      "the $450 sleeve charter",
+      "any entry condition - size is decided AFTER a setup has passed every gate, never to justify taking one"
+    ],
+    "expectancy_note": "Sizing to the cap scales wins and losses by the same factor. It raises the sleeve's variance and its expected dollar outcome together; it does not improve the odds of any individual trade. The rails, not the sizing, are what keep this bounded."
+  },
+  "risk_limits": {
+    "max_risk_per_position_usd": 150.0,
+    "size_each_entry_to_the_cap": true,
+    "max_concurrent_convexity_positions": 3,
+    "max_total_convexity_at_risk_usd": 450.0,
+    "max_new_positions_per_week": 2,
+    "daily_loss_limit_usd": 150.0,
+    "weekly_loss_limit_usd": 225.0,
+    "drawdown_circuit_breaker_pct": 0.15,
+    "drawdown_halt_days": 30,
+    "drawdown_halt_scope": "convexity_only_core_untouched",
+    "correlation_cap_same_direction": 2,
+    "correlated_groups": [
+      [
+        "SPY",
+        "QQQ",
+        "IWM"
+      ]
+    ],
+    "max_annual_refill_pct_of_year_start_equity": 0.2
+  },
+  "cadence": {
+    "arm_pass_et": "09:45",
+    "arm_pass_role": "conditions only (BB width pct, IV rank, RSI2, 200-SMA, earnings proximity, day-trade budget). Computes the day trigger levels. NEVER enters.",
+    "trigger_pass_et": "15:45",
+    "trigger_pass_role": "reads the near-final CLOSE against the armed levels; this is the only pass that enters.",
+    "why_two_passes": "Both setups trigger on a CLOSE, so a morning pass cannot evaluate a trigger. A single 09:45 pass would miss every signal or tempt a forbidden intraday entry.",
+    "never_trade_the_open": true,
+    "day_trade_budget_check_et": "15:50",
+    "ratchet_click_et": "friday 15:45",
+    "monthly_resize": "first_session_of_month"
+  },
+  "pre_trade_checklist": [
+    "setup conditions fully met (no partial credit)",
+    "underlying passes all liquidity filters",
+    "spread bid/ask <= 10% of mid right now",
+    "max loss <= $150",
+    "position count after entry <= 3",
+    "total sleeve risk after entry <= $450",
+    "correlation cap not breached",
+    "entries this week <= 2",
+    "not in LOCKDOWN; >= 2 day trades available",
+    "not in drawdown halt",
+    "no earnings before exit date (CB only)",
+    "DTE between 30 and 45",
+    "GTC target and stop ready to place on fill"
+  ],
+  "checklist_rule": "Any unchecked box is a NO TRADE. Not a smaller trade -- a no trade.",
+  "falsification": {
+    "min_closed_trades_before_judging": 60,
+    "abandon_if_hit_rate_below": 0.43,
+    "abandon_if_avg_friction_pct_of_debit_above": 0.08,
+    "abandon_if_underperforms_core_risk_adjusted_over": "1 year",
+    "correct_action_on_falsification": "stop trading convexity and hold core; do NOT tune parameters until the backtest looks better"
+  },
+  "impossible_goal_note": {
+    "requested": "2x daily",
+    "compounded_1yr": "2^252 = 7.2e75, exceeds all world financial assets (~1e15) by ~60 orders of magnitude",
+    "sessions_to_exceed_world_assets_from_1500": 60,
+    "blocked_by": "PDT rule caps this account at 3 day trades per 5 business days; daily doubling needs ~5/week",
+    "real_doubling_timelines": {
+      "15pct_yr": "5.0 years",
+      "30pct_yr": "2.6 years",
+      "50pct_yr": "1.7 years"
+    }
+  },
+  "disclaimer": "Not financial advice. Specification only. No trades placed. All expectancy figures are illustrative calculations from assumed hit rates, not backtested results.",
+  "simulation": {
+    "script": "sim/ratchet_sim.py",
+    "paths": 20000,
+    "sessions": 252,
+    "ratchet_p_ruin_all_scenarios": 0.0,
+    "ratchet_worst_5th_pct_usd": 1027,
+    "doubler_p_ruin_held_to_expiry": 1.0,
+    "doubler_p_ruin_with_stop_losses": 1.0,
+    "doubler_median_sessions_to_ruin_with_stops": 13,
+    "doubler_arithmetic_edge_with_stops": 0.005,
+    "doubler_geometric_edge_with_stops": -0.213,
+    "key_finding": "A full-size daily bet with a FLAT arithmetic edge still ruins 100% of the time, because volatility drag makes its geometric return -21%/trade. Sizing, not skill, is what defeats this.",
+    "caveat": "Assumptions, not backtests. No historical validation of CB or PED filters was performed."
+  },
+  "execution": {
+    "never_market_order": true,
+    "single_two_leg_spread_order": true,
+    "legging_in_prohibited": true,
+    "limit_at_mid": true,
+    "max_price_walk_usd": null,
+    "walk_step_usd": 0.01,
+    "walk_interval_seconds": 30,
+    "if_unfilled_stand_down": true,
+    "place_gtc_exits_immediately_on_fill": true,
+    "no_trading_first_15_minutes": true,
+    "rationale": "Strike choice moves break-even hit rate 13 points; order type moves it nearly as much. Execution IS the strategy at $1,500.",
+    "max_price_walk": "ONE TICK beyond mid",
+    "tick_by_chain": {
+      "SPY_and_penny_chains": 0.01,
+      "single_names_above_$3.00": 0.05
+    },
+    "walk_rule_correction_v1_2": "v1.1 said 'walk at most $0.02'. Single-name chains tick in $0.05 above $3.00, so $0.02 is unexpressible. Corrected to one tick."
+  },
+  "spy_only_module": {
+    "doc": "SPY-MODULE.md",
+    "setup_b_replaced": "PED cannot fire on SPY (no earnings); replaced by Trend Pullback (TPB)",
+    "trend_pullback": {
+      "id": "TPB",
+      "regime_filter": "close > 200-day SMA",
+      "washout": "RSI(2) < 15",
+      "trigger": "first daily close above prior session high",
+      "event_filter": "not within 2 sessions of FOMC, CPI, or NFP",
+      "direction": "long only by construction"
+    },
+    "concurrency": {
+      "max_same_direction_positions": 2,
+      "third_position_allowed_only_if": "opposite direction",
+      "same_direction_must_use_different_expirations": true
+    },
+    "correlation_cost_rho_0_85_vs_0": {
+      "median": [
+        1533,
+        1469
+      ],
+      "fifth_pct": [
+        1079,
+        1035
+      ],
+      "ninety_fifth_pct": [
+        2759,
+        3365
+      ],
+      "p_double": [
+        0.027,
+        0.084
+      ],
+      "reading": "Correlation does not cost expected return; it widens the distribution both ways. Survivable only because the sleeve is capped at 30%."
+    },
+    "whole_account_is_one_asset": "Core is SPY and Convexity is SPY, so there is no diversification anywhere in this account. Explicit accepted tradeoff."
+  },
+  "live_state_2026_09_02": {
+    "spy_price": 765.07,
+    "sma_200": 710.66,
+    "bb20": {
+      "lower": 756.58,
+      "middle": 765.05,
+      "upper": 773.52,
+      "width_pct": 2.21
+    },
+    "bb_width_1y_context": {
+      "april_2026_peak_pct": 16.1,
+      "dec_2025_trough_pct": 2.52,
+      "reading": "current 2.21% is at or near the 1-year minimum"
+    },
+    "rsi_2_last_5": [
+      62.98,
+      91.64,
+      59.51,
+      30.97,
+      9.69
+    ],
+    "atm_iv_pct": [
+      10.5,
+      11.1
+    ],
+    "compression_break": "ARMED, NOT TRIGGERED \u2014 needs a daily close above 773.52 or below 756.58",
+    "trend_pullback": "regime + washout PASS; trigger pending today close",
+    "caution": "The two setups firing together are not independent confirmations \u2014 both read the same quiet tape. Size as ONE position.",
+    "orders_placed": "none"
+  },
+  "high_beta_module": {
+    "doc": "HIGH-BETA-MODULE.md",
+    "analysis": "sim/highbeta_compare.py",
+    "key_finding": "Delta-matched 30-delta verticals have ~21-22% probability of profit across IV from 10.7% (SPY) to 71.4% (MSTR). Higher IV does NOT improve win odds \u2014 it is already in the price. What improves is reward:risk and the target as a fraction of max profit.",
+    "cost": "Single names tick in $0.05 vs SPY pennies. Break-even hit rate rises from 34.3% to ~38.6-39.4% on a patient one-tick fill, and to 47-64% if you cross the spread.",
+    "universe": {
+      "SPY": {
+        "iv": 0.107,
+        "rr": 2.45,
+        "combined_oi": 26329,
+        "status": "active",
+        "role": "index anchor, tightest execution"
+      },
+      "NVDA": {
+        "iv": 0.325,
+        "rr": 3.08,
+        "combined_oi": 65926,
+        "status": "active",
+        "role": "primary high-beta"
+      },
+      "PLTR": {
+        "iv": 0.462,
+        "rr": 2.92,
+        "combined_oi": 7499,
+        "status": "active",
+        "role": "secondary high-beta"
+      },
+      "TSLA": {
+        "iv": 0.424,
+        "rr": 3.17,
+        "combined_oi": 4962,
+        "status": "watchlist",
+        "reason": "ask size 2 / bid size 3 \u2014 book too thin to exit under stress"
+      },
+      "MSTR": {
+        "iv": 0.714,
+        "rr": 3.55,
+        "combined_oi": 9054,
+        "status": "watchlist",
+        "reason": "22.7% crossing cost, 63.6% break-even"
+      }
+    },
+    "structural_changes": {
+      "setup_b_revived": "Post-Earnings Drift can fire again on single names; it never could on SPY. Restores a second uncorrelated return driver.",
+      "earnings_now_binding": "Every single-name entry MUST verify the earnings date falls after the planned exit. Pre-trade check, not monitoring.",
+      "correlation": "SPY and NVDA are partially correlated \u2014 the max-2-same-direction cap applies across the pair, not to each separately.",
+      "gap_risk": "Single names gap harder than an index. The -50% stop is a resting order, not a guarantee."
+    },
+    "frequency_unchanged": "Still max 2 entries/week. Frequency multiplies friction; volatility does not."
+  }
+}
