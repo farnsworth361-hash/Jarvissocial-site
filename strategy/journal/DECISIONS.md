@@ -543,6 +543,90 @@ be inside of.
 
 ---
 
+## 2026-09-10 · INTC closed at a loss of $933 · and the stop mechanism was broken
+
+**Result:** flat at 09:38 ET. Realized **−$933** on the $1,297 basis (−72%).
+Account **$564.87**, all cash, from $1,502.97 the previous Friday.
+
+| leg | action | fill | proceeds |
+|---|---|---|---|
+| 110 call ×7 | buy to close | $0.16 | −$112 |
+| 105 call ×7 | sell to close | $0.68 | +$476 |
+| | | **net** | **+$364** |
+
+### The mechanism failure — the important part of this entry
+
+The monitored stop built on 2026-09-08 **could not have executed as designed.**
+At the trigger, `place_option_order` returned:
+
+> `Multi-leg options orders aren't supported in Robinhood agentic accounts yet.`
+
+What was verified when the stop was built: that Robinhood will not *rest* a stop
+order on a spread (only `limit` is available with 2+ legs). What was **not**
+verified: that a closing *limit* order on a spread would be accepted at all from
+this account. It is not. The holder was told a stop was in place. It would have
+failed at the only moment it mattered.
+
+**The generalisable lesson, stated so it is not lost:** verifying that a
+constraint exists is not the same as verifying the intended action works. The
+exit path must be *executed* — or at minimum accepted by the broker in review —
+before a position is described as protected. A review call would have caught this
+on 2026-09-08 for the cost of one API round trip. `review_option_order` accepts
+multi-leg previews, so even review would not have caught it; only an actual
+`place_option_order` attempt surfaces the restriction. That makes it worse, not
+better: the only reliable test is a live order, so any future exit plan on this
+account must be single-leg by construction.
+
+**Recovery, improvised at the trigger:** legged out with two single-leg orders,
+short side first — buy back the 110s (leaving a long-only position, which needs
+no collateral and carries no assignment risk), then sell the 105s. The reverse
+order would have left 7 naked short calls against $201 of cash and would have
+been rejected. Total elapsed from trigger detection to flat: about 3 minutes. The
+105s filled at $0.68 against a $0.66 limit, +$14 of price improvement.
+
+**Standing rule for this account: any options exit plan must be single-leg.**
+Multi-leg orders cannot be placed here at all, opening or closing. That also means
+this account cannot execute RATCHET's debit verticals as specified — see below.
+
+### The gap — what the stop could and could not do
+
+INTC closed 2026-09-09 at **$106.24** and opened 2026-09-10 at **$101.14**,
+**−4.80%**. The account went from $1,468.49 at Wednesday's bell to $558.49 at
+Thursday's open, straight through the $1,015.49 trigger without trading near it
+during any monitored session.
+
+Designed outcome of the stop: exit near $1.16, loss ≈ $485.
+Actual: exit at $0.52 net, loss $933 — **roughly double**.
+
+The holder was warned on 2026-09-08 that "a gap through the level fills below it,
+not at it." That warning was correct and it is the case that occurred. It should
+not be read as the stop being pointless: riding to expiry with INTC at $101 and
+both strikes out of the money was the **full $1,297**, leaving $201 in the
+account. The stop salvaged $364. It did roughly half the job it was described as
+doing, and the half it missed was the half no monitored stop can cover.
+
+Prediction accuracy, recorded for honesty: on 2026-09-09 09:36 ET this was called
+as "likely to trigger Thursday on decay alone." It did trigger Thursday, but on a
+4.8% overnight gap, not on decay. The timing was right for the wrong reason, and
+that is not a successful forecast.
+
+### RATCHET cannot run on this account as specified
+
+The Convexity sleeve is defined as **debit verticals** — two-leg spreads. This
+account cannot place them. Before RATCHET resumes, the sleeve has to be
+redesigned around single-leg instruments, or moved to an account that accepts
+multi-leg orders. Every simulation, break-even figure and friction estimate in
+`RATCHET.md` §7 assumes verticals and does not transfer to single-leg longs,
+whose break-even hit rate is far higher. **This is not a small amendment.**
+
+Account state: $564.87, all cash, no positions, no Core sleeve. RATCHET remains
+unfunded and now also **unimplementable as written**. No new entry is authorised.
+
+Still unresolved: the 2026-09-08 SPY liquidation carrying `placed_agent: agentic`
+that did not originate from this session.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and

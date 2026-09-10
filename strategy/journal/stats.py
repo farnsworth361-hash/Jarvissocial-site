@@ -51,7 +51,15 @@ def main():
         return 1
 
     with open(path) as f:
-        rows = [r for r in csv.DictReader(f) if r.get('date_opened', '').strip()]
+        all_rows = [r for r in csv.DictReader(f) if r.get('date_opened', '').strip()]
+
+    # Trades the holder placed outside the framework are kept in trades.csv as a
+    # record but MUST NOT enter the statistics. They break the rails by
+    # construction -- wrong universe, wrong size, wrong DTE -- so their fills say
+    # nothing about whether RATCHET works, and including even one of them at this
+    # sample size swamps the estimate. Section 10 judges RATCHET, not the account.
+    rows = [r for r in all_rows if r.get('setup', '').strip() != 'OUT-OF-FRAMEWORK']
+    excluded = len(all_rows) - len(rows)
 
     opened = len(rows)
     closed = [r for r in rows if r.get('date_closed', '').strip()]
@@ -62,6 +70,9 @@ def main():
     print("=" * 72)
     print(f"positions opened : {opened}")
     print(f"positions closed : {n}")
+    if excluded:
+        print(f"excluded         : {excluded} out-of-framework trade(s), logged "
+              f"in trades.csv but not counted here")
 
     # Entry slippage is measurable from the moment a position opens -- it does
     # not require the trade to be closed, and it is the earliest signal that the
