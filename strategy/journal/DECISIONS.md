@@ -627,6 +627,44 @@ that did not originate from this session.
 
 ---
 
+## 2026-09-14 · Account refunded $2,000 — one of two blockers cleared
+
+Account **$2,564.87**, all cash, no positions. A $2,000 deposit landed against the
+$564.87 remaining after the INTC close. `pending_deposits` is zero, so it is
+settled and spendable.
+
+**Blocker 1 (unfunded) is cleared. Blocker 2 is not.** The Convexity sleeve is
+specified as debit verticals and this account cannot place them —
+`place_option_order` rejects two legs, opening or closing. Money does not fix
+that. RATCHET stays dormant until the sleeve is either redesigned around
+single-leg instruments or moved to an account that accepts multi-leg orders, and
+that is the holder's decision to make, not one to improvise into.
+
+**What the refund changes if the redesign happens.** At $2,564.87 the 70/30 split
+would put Core at ~$1,795 and the Convexity charter at ~$770, against the $450 it
+was. The per-position cap, being 33% of the sleeve, would scale to roughly $255.
+None of that should be applied until the instrument question is settled — the
+$150 cap and the 34.3% break-even both derive from vertical economics that no
+longer hold here.
+
+**PDT still binds.** $2,564.87 is far below the $25,000 threshold, so day trades
+remain capped at 3 per rolling 5 business days. Nothing about the deposit
+loosens that.
+
+**Worth recording against the strategy's own history.** Deposits were identified
+on 2026-09-03 as worth roughly six times the return lever at this account size,
+and then argued for again on 2026-09-04 when the holder asked for the highest
+possible rate of return. A $2,000 deposit moved the account further in one
+transfer than any realistic trading outcome would have over months. That is the
+lever working exactly as the arithmetic said it would, and it is the one part of
+this account's history that went according to plan.
+
+Still unresolved: the 2026-09-08 SPY liquidation carrying `placed_agent: agentic`
+that did not originate from this session. Another agent connection has trade
+authority on this account.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
