@@ -665,6 +665,45 @@ authority on this account.
 
 ---
 
+## 2026-09-21 · Account is fully in SPY — bought by an agent, not this session
+
+Account **$2,605.76**: 3.358353 SPY worth $2,600.88, cash **$4.88**.
+
+**The order:** $2,560 dollar-based market buy, filled Wed 2026-09-17 at 11:46 ET,
+3.358353 sh @ $762.2782, `placed_agent: agentic`. **It did not originate from
+this session.** SPY is $774.50 as of 2026-09-21 15:45 ET, so the position is
+**+$40.88 (+1.60%)**.
+
+**This is the second unannounced agentic trade on this account.** The first sold
+the Core SPY sleeve on 2026-09-08; this one rebuilt it. The pattern is now
+established rather than anomalous: a second agent connection holds trade
+authority here and acts without this session's knowledge. Flagged on 09-08,
+09-10 and 09-14 and still unaddressed. Recording it a fourth time because the
+risk is structural, not hypothetical — two agents writing to one account, neither
+aware of the other, is exactly how the Core sleeve got liquidated under a
+framework whose first rule was never to sell Core.
+
+**On the merits, this trade is fine.** Broad index, bought and held, no leverage,
+no expiry. It is the Core sleeve concept executed at 100% rather than 70%, and it
+is the opposite of the INTC episode in every respect that matters. Saying so
+plainly: if the choice is between an agent that buys SPY and an agent that buys
+7-lot 3-DTE spreads on an out-of-universe name, this is the good outcome. The
+objection is to the coordination gap, not to the position.
+
+**Where it leaves RATCHET.** The allocation is now ~99.8% Core and 0.2% cash
+against a specified 70/30. But the Convexity sleeve remains unimplementable —
+this account rejects multi-leg orders — so **100% Core is currently the only
+executable form of the strategy.** That is not a failure state; it is the honest
+consequence of the instrument constraint. With $4.88 of cash there is also no dry
+powder, and funding a Convexity sleeve would require selling Core, which the
+charter forbids outright.
+
+Nothing to do. No position was opened or closed by this session. The instrument
+decision — redesign single-leg, or move to an account that accepts verticals —
+remains open and remains the holder's.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
