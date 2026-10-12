@@ -704,6 +704,47 @@ remains open and remains the holder's.
 
 ---
 
+## 2026-10-12 · Found the control that would have caught the unexplained trades
+
+Account state unchanged for a fourth week — $2,617.05, 3.358353 SPY worth
+$2,612.17 (+$52.17, +2.04% on the $2,560 basis), cash $4.88, no orders. Nothing
+about the position is worth logging.
+
+**What is worth logging:** Robinhood exposes a per-account trade-approval
+setting, and on ••••8464 it reads:
+
+```
+human_must_approve_trades: false   (set 2026-08-26T15:53:02Z)
+```
+
+This is the switch that makes every agent-placed order wait for the holder's
+manual approval in the Robinhood app before it executes. **It is off, and it has
+been off since before any of this account's history in this journal.** It is the
+direct remedy for the thing flagged on 09-08, 09-10, 09-14 and 09-21 — two
+agentic orders (SPY sold 09-08, SPY bought 09-17) that did not originate from
+this session and that nobody here authorised. With the setting on, neither could
+have filled without the holder tapping approve.
+
+Two things to be precise about:
+
+- **No tool here can change it.** Only the holder can, in the Robinhood app. The
+  MCP surface is read-only on this setting by design, which is the correct
+  design.
+- **It is a real tradeoff, not a free win.** Turning it on would also mean every
+  order this session places waits on a tap — which directly contradicts the
+  "fire within the rails" authority granted on 2026-09-04. The holder cannot
+  have both unattended execution and mandatory approval. Worth saying plainly
+  rather than recommending the safe-sounding option by reflex: given that RATCHET
+  is dormant and this session is placing nothing, turning approvals **on** costs
+  almost nothing right now and closes the gap that actually caused harm. If
+  trading resumes under the v1.3 grant, it becomes a genuine choice.
+
+Recorded so future runs point at the remedy instead of re-reporting the
+complaint. Four flags with no fix available was the right thing to do; a fifth
+would not have been.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
