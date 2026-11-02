@@ -745,6 +745,39 @@ would not have been.
 
 ---
 
+## 2026-11-02 · First income the account has ever produced: a $6.34 dividend
+
+Account **$2,542.56** — 3.358353 SPY worth $2,531.34, cash **$11.22**. No orders
+between 10-26 and 11-02. Approval setting still `human_must_approve_trades =
+false`. Seventh consecutive week with no trading activity.
+
+**The one real change:** cash went $4.88 → $11.22 with the share count
+unchanged and no orders on the book. Verified rather than assumed — SPY's
+distribution with ex-date 2026-09-18 **paid on 2026-10-30** at
+**$1.888834/share**, and 3.358353 × 1.888834 = **$6.3434**, which matches the
+$6.34 credit exactly.
+
+Two things that follow from it:
+
+- **DRIP is off.** The dividend arrived as cash, not as additional shares. Worth
+  knowing because a Core sleeve that is meant to be bought and held compounds
+  faster with reinvestment, and at this size $6.34 a quarter will otherwise just
+  sit as idle cash. Turning DRIP on is the holder's to do in the Robinhood app;
+  no tool here changes it. Flagging it once as information, not as a
+  recommendation — at $2,540 the difference is a few dollars a year, and it is
+  not worth a decision the holder has to make while the strategy is dormant.
+- **Total return is not the same as the mark.** The position marks at −$28.66
+  (−1.12%) against the $2,560 cost basis, but with the $6.34 distribution in
+  hand the total return is **−$22.32 (−0.87%)**. Both numbers are small and both
+  are noise at this horizon; recorded so the dividend is not silently lost from
+  the return calculation later.
+
+Nothing else to report. RATCHET remains dormant pending the instrument decision
+— the Convexity sleeve is specified as debit verticals and this account rejects
+multi-leg orders, which money does not fix.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
