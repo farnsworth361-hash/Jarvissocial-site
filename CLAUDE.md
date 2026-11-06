@@ -19,12 +19,51 @@ broker/analyst research, and macro/economic questions.
 
 Branding: always write it as **Bigdata.com** and link https://bigdata.com.
 
-## ACTIVE TRADING FRAMEWORK — RATCHET
+## RATCHET — RETIRED 2026-11-06
+
+**The account no longer runs RATCHET.** On 2026-11-06 the holder instructed the
+Core sleeve closed and rolled into **SPCX (SpaceX)**: sold 3.358353 SPY @
+$740.705, bought 19.003746 SPCX @ $131.2899. Core-is-SPY was the charter's first
+rule, so the framework no longer describes this account. It had already been
+unfunded from 2026-09-08 and **unimplementable** from 2026-09-10, when a live
+order revealed this account rejects multi-leg options orders and therefore cannot
+place the debit verticals the Convexity sleeve is built from.
+
+**Current position: 19.003746 SPCX, ~$2,495, ~99.9% of the account.** One stock,
+79.7% annualized volatility, −46.3% worst drawdown in its five months of listed
+history. There is no sleeve structure, no position cap and no stop. Nothing in
+`strategy/` describes it — in particular the expectancy and break-even figures in
+`RATCHET.md` §7 assume debit verticals and **must not be cited for this position.**
+
+**What still applies, and why it was expensive to learn:**
+
+- **Verify, never recall.** This model's training ends May 2026. SPCX listed
+  2026-06-12 and on 2026-11-06 it was asserted here that SpaceX was private and
+  untradable — wrong, and corrected only by calling the tools. Any claim about
+  what exists or is tradable comes from a tool call.
+- **Multi-leg options orders are rejected on this account**, opening or closing.
+  `review_option_order` accepts multi-leg previews, so only a live
+  `place_option_order` surfaces it. Any options exit plan here must be
+  **single-leg by construction**; if a spread ever exists, leg out **short leg
+  first** so the interim position is long-only and needs no collateral.
+- **PDT binds** below $25,000: three day trades per rolling five business days.
+- `human_must_approve_trades` has read **false** since 2026-08-26. Only the
+  holder can change it, in the Robinhood app.
+- Two agentic orders on 2026-09-08 and 2026-09-17 did not originate from this
+  session. Another agent connection holds trade authority here.
 
 **Account: ONLY ••••8464, nicknamed "Agentic."** Never touch another account,
 even read-only, without an explicit request. There is no account nicknamed
 "Claude" — the holder confirmed on 2026-09-03 that "Agentic" is the one they
 mean. Confirm the account and buying power at the start of every session.
+
+**Selling Core, changing the account's instrument, or any new strategy still
+needs an explicit instruction from the holder.** The 2026-09-04 "fire within the
+rails" grant below is kept for the record, but there are no rails now: it
+authorises nothing until a new framework exists.
+
+<details>
+<summary>Historical — the retired RATCHET rules</summary>
 
 **AUTHORITY — FIRE WITHIN THE RAILS (set 2026-09-04).** When every rail passes,
 place the order. Do not wait for per-order approval; report the fill afterwards.
@@ -69,6 +108,8 @@ which moves the break-even hit rate from 34.3% to 47.5%.
 `strategy/journal/DECISIONS.md` with the failing condition named; fills go in
 `trades.csv` with both `debit_mid` and `debit_filled`, because realized
 slippage is the earliest testable claim in the strategy.
+
+</details>
 
 ## SPY 0DTE — TRIED AND DROPPED 2026-09-03
 

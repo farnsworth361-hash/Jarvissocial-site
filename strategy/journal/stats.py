@@ -58,7 +58,10 @@ def main():
     # construction -- wrong universe, wrong size, wrong DTE -- so their fills say
     # nothing about whether RATCHET works, and including even one of them at this
     # sample size swamps the estimate. Section 10 judges RATCHET, not the account.
-    rows = [r for r in all_rows if r.get('setup', '').strip() != 'OUT-OF-FRAMEWORK']
+    # 'CORE-ROTATION' is a Core sleeve buy or sale, not a Convexity signal, so it
+    # does not belong in a hit-rate or friction sample either.
+    NOT_RATCHET = ('OUT-OF-FRAMEWORK', 'CORE-ROTATION')
+    rows = [r for r in all_rows if r.get('setup', '').strip() not in NOT_RATCHET]
     excluded = len(all_rows) - len(rows)
 
     opened = len(rows)

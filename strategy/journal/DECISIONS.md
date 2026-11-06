@@ -778,6 +778,96 @@ multi-leg orders, which money does not fix.
 
 ---
 
+## 2026-11-06 · Core rotated SPY → SPCX (SpaceX). RATCHET is retired.
+
+Executed on the holder's explicit instruction: "close the position on the S&P 500
+and roll it over to going long on SpaceX," confirmed with "Go."
+
+| | |
+|---|---|
+| SOLD | 3.358353 SPY @ **$740.705**, fees $0.05 → $2,487.50 |
+| BOUGHT | **19.003746 SPCX @ $131.2899**, no fees → $2,495.00 |
+| Account after | $2,499.29 — $2,495.57 SPCX, $3.72 cash |
+
+Both market orders, filled 34 seconds apart in the same session, so the account
+was never left sitting in cash with the decision half-made. Realized **−$72.50**
+on SPY against the $2,560 basis; net of the $6.34 dividend collected 2026-10-30,
+the whole SPY episode cost **−$66.16**.
+
+### A factual error I made, corrected
+
+I opened this exchange by telling the holder SpaceX is privately held and has no
+ticker. **That was wrong.** SPCX — Space Exploration Technologies Corp. Class A —
+listed on **2026-06-12**, after this model's May 2026 training cutoff. The error
+was corrected in the same conversation before anything was placed, and every
+figure below came from live tools rather than recall. **Standing lesson: on this
+account, any claim about what exists or is tradable must come from a tool call.
+The training cutoff is now months stale and will keep getting staler.**
+
+### What SPCX actually is, from its own record
+
+| | |
+|---|---|
+| History | 102 sessions since 2026-06-12 (~5 months) |
+| Annualized volatility | **79.7%** — roughly 5× SPY |
+| Worst drawdown since listing | **−46.3%** |
+| 52wk high → low | $225.64 → $104.83 (−53.5%) |
+| Entry $131.29 vs high | **−41.8%** |
+| Sessions moving ≥5% | 22 of 101 (**22%**) |
+| Market cap / P/B | $1.79T / 9.50 · no P/E figure |
+| Shares out / float | 13.58B / 4.29B — **31.6% float** |
+| Liquidity | 107M shares/day, penny spread |
+
+Per the filing description this is SpaceX, Starlink **and xAI/Grok** combined
+following the xAI acquisition — not a pure launch business.
+
+The holder was shown all of the above, including that a repeat of SPCX's own worst
+drawdown takes $2,488 to roughly $1,335, and instructed the trade anyway. That is
+their call and it was informed.
+
+**One risk flagged as a question, not a fact:** 68% of shares are outside the
+float. On a June IPO a conventional 180-day lockup would expire around early-to-mid
+December, about five weeks out. SpaceX's actual lockup terms were not verified and
+should be before adding to this position.
+
+### RATCHET is retired, and saying so is honest rather than sad
+
+Core-is-SPY was the charter's first rule; a single 80%-vol stock is not a Core
+sleeve. The framework had already been **unfunded, then unimplementable** since
+2026-09-10, when it emerged that this account rejects multi-leg orders and
+therefore cannot place the debit verticals the Convexity sleeve is made of. Eight
+weekly status reports said "dormant pending the instrument decision." This
+rotation does not kill a working strategy; it formalises one that stopped being
+executable two months ago.
+
+What survives and is worth keeping: the friction and strike-grid work, the
+PDT arithmetic, the geometric-vs-arithmetic return analysis, the finding that
+only a live `place_option_order` reveals the multi-leg restriction, and the
+single-leg-exit rule. The expectancy simulations in `RATCHET.md` §7 do **not**
+transfer to anything and should not be cited for the new position.
+
+**The weekly status routine is being retired with it** — it existed to report a
+dormant framework. A single concentrated stock position needs either real
+monitoring or none, not a two-line weekly note, and that is the holder's call.
+
+### Repository incident, recorded because it nearly lost this journal
+
+On arriving today the working tree had no `CLAUDE.md` and no `strategy/`. The
+branch `claude/robinhood-ai-strategy-1rjntq` had been **force-pushed to unrelated
+work** (TikTok OAuth relay pages, head `14adebe`), orphaning every RATCHET commit
+from `df9d54a` through `15d92d4`.
+
+The history was recovered from **`refs/pull/1/head`**, which GitHub still held at
+`15d92d4` — a force-push over a branch does not remove commits a pull request
+references. This entry therefore sits on a **new branch, `claude/ratchet-journal`**.
+
+The old branch was deliberately **not** restored: force-pushing this history back
+would have destroyed whoever's TikTok work now occupies that name. Recovering by
+addition rather than overwrite was the only safe option, and the same reasoning
+applies to anyone who finds this later.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
