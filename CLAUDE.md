@@ -22,25 +22,45 @@ Branding: always write it as **Bigdata.com** and link https://bigdata.com.
 ## RATCHET — RETIRED 2026-11-06
 
 **The account no longer runs RATCHET.** On 2026-11-06 the holder instructed the
-Core sleeve closed and rolled into **SPCX (SpaceX)**: sold 3.358353 SPY @
-$740.705, bought 19.003746 SPCX @ $131.2899. Core-is-SPY was the charter's first
+Core sleeve closed and rolled into SpaceX: sold 3.358353 SPY @ $740.705, bought
+19.003746 SPCX @ $131.2899 — then, three hours later, sold that and went **all
+in on SPCH, a 2x leveraged fund on SPCX**. Core-is-SPY was the charter's first
 rule, so the framework no longer describes this account. It had already been
 unfunded from 2026-09-08 and **unimplementable** from 2026-09-10, when a live
 order revealed this account rejects multi-leg options orders and therefore cannot
 place the debit verticals the Convexity sleeve is built from.
 
-**Current position: 19.003746 SPCX, ~$2,495, ~99.9% of the account.** One stock,
-79.7% annualized volatility, −46.3% worst drawdown in its five months of listed
-history. There is no sleeve structure, no position cap and no stop. Nothing in
-`strategy/` describes it — in particular the expectancy and break-even figures in
-`RATCHET.md` §7 assume debit verticals and **must not be cited for this position.**
+**Current position: 349.519410 SPCH @ $7.2099, cost $2,520.00, ~99.9% of the
+account** (bought 2026-11-06, order `6aee1d90-4104-4ff4-a347-cf3779f0b920`).
+SPCH is **not SpaceX** — it is a 2x daily-reset leveraged fund on SPCX, which
+itself runs 79.7% annualized volatility with a −46.3% worst drawdown in five
+months of listed history. Consequences, all verified and all still true:
+
+- **Volatility drag at k=2 is σ², i.e. −63.5%/yr of log return** at SPCX's vol —
+  roughly **−47% over a flat year.** SPCX can end a year unchanged and this
+  position still halves.
+- **A ~50% adverse move in SPCX is a wipeout.**
+- **The final SpaceX lockup tranche clears 2026-12-08** (verified 2026-11-09;
+  staggered S-1 schedule, not a single 180-day cliff; ~40% of the company
+  tradable after it; Musk locked until ~June 2027). Past unlocks have **not**
+  reliably been down days — the largest, 2026-08-06, saw the stock rally — so
+  this is a dated supply event taken at 2x, not a prediction.
+
+There is no sleeve structure, no position cap, no stop and no stated holding
+period. **Nothing in `strategy/` describes a leveraged single-stock position** —
+in particular the expectancy and break-even figures in `RATCHET.md` §7 assume
+debit verticals and **must not be cited for this position.** It was recommended
+against; the holder overrode that on the numbers, which is their call.
 
 **What still applies, and why it was expensive to learn:**
 
 - **Verify, never recall.** This model's training ends May 2026. SPCX listed
   2026-06-12 and on 2026-11-06 it was asserted here that SpaceX was private and
   untradable — wrong, and corrected only by calling the tools. Any claim about
-  what exists or is tradable comes from a tool call.
+  what exists or is tradable comes from a tool call. The same day a lockup date
+  was *guessed* as "around Dec 9" and happened to land within a day of the real
+  Dec 8 — a correct unsourced claim is still an unsourced claim. Cite the source
+  or do not state it.
 - **Multi-leg options orders are rejected on this account**, opening or closing.
   `review_option_order` accepts multi-leg previews, so only a live
   `place_option_order` surfaces it. Any options exit plan here must be

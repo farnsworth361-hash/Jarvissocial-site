@@ -868,6 +868,148 @@ applies to anyone who finds this later.
 
 ---
 
+## 2026-11-06 (same session, 3h later) · SPCX → SPCH. The account is now 2x leveraged.
+
+Three hours after the SPY → SPCX rotation above, the holder asked for "a hot
+aggressive move," then "sell and buy long on spacex all in," then chose
+**leverage** from the options offered and said "place it."
+
+| | |
+|---|---|
+| SOLD | 19.003746 SPCX @ **$132.6201**, fees $0.06 → **$2,520.08** |
+| | order `6aee1d76-48b5-4e1a-94cb-bdaee9110b85`, 18:33:27Z |
+| BOUGHT | **349.519410 SPCH** @ **$7.2099**, $2,520.00 dollar-based market order, no fees |
+| | order `6aee1d90-4104-4ff4-a347-cf3779f0b920`, 18:33:52Z |
+
+The two fills are **25 seconds apart**. The SPCX position was therefore opened
+and closed in one session: **one day trade consumed**, 1 of 3 in the rolling
+five-business-day window, ageing off after Nov 13. It also made **+$25.08** on a
+three-hour hold, which is noise and is recorded as noise.
+
+SPCH is a **2x daily-reset leveraged fund on SPCX** — per its own filing
+description, "2x leveraged exposure to the daily price movement of Space
+Exploration Technologies Corp." It is not SpaceX. It is a derivative of SpaceX
+that resets its leverage every day.
+
+### What was put in front of the holder before the order
+
+All five 2x SpaceX funds peaked **2026-06-16** — the same day as SPCX itself —
+and bottomed **2026-08-06**. At the time of the trade SPCX was **−41.8%** from
+its high while the 2x funds were **−73.6% to −74.9%** from theirs. That gap is
+not tracking error; it is the structural cost of daily rebalancing through a
+−53% round trip. Intraday they track correctly (that session SPCX +6.27%, the
+funds +12.3% to +13.1%), which is exactly the point: **they deliver 2x of a day
+and much worse than 2x of a year.**
+
+The arithmetic, stated plainly at the time: for a k× daily-reset fund the
+volatility drag is ≈ **k(k−1)σ²/2**, which at k=2 is simply **σ²**. At SPCX's
+79.7% annualized volatility that is **−63.5% per year of log return — about
+−47% over a flat year.** SPCX can finish a year unchanged and this position
+still loses roughly half its value.
+
+Two further consequences, each stated once:
+
+- A **~50% adverse move in SPCX wipes this out** (SPCX ≈ $71 from here).
+- The possible December lockup supply event is now taken **at 2x**.
+
+**SPCH was chosen among the five** purely on depth — ~$373M market cap at the
+time, 24.8M average shares/day, penny spread. Of a bad set it is the liquid one.
+
+### The recommendation was against this trade and the holder overrode it
+
+What was said, verbatim in substance: *of everything discussed since September,
+this is the position most likely to end at zero, and it is the first one with no
+exit plan attached.* The holder said "place it." That is their call, it was made
+on the numbers above rather than in ignorance of them, and the order was placed
+because the authority to act on an explicit instruction is not conditional on
+agreeing with it.
+
+What is **not** true and must not be written later: that this was advised, or
+that any analysis in `strategy/` supports it. **Nothing in this repository
+describes a leveraged single-stock position.** There is no framework, no
+position cap, no stop and no stated holding period.
+
+---
+
+## 2026-11-09 · The lockup question is answered, with sources. It is Dec 8.
+
+Friday's entry left one item open: SpaceX's **actual** lockup terms were never
+verified, and a guess of "around 2026-12-09" was recorded as a guess. Verified
+today.
+
+**SpaceX did not use a single 180-day cliff.** Per the S-1 the schedule is
+staggered: 20% of eligible insider shares after Q2 earnings, **plus a further
+10% triggered because the stock closed ≥30% above the $135 IPO price (≥$175.50)
+on 5 of 10 sessions**; then **7% at each of days 70, 90, 105, 120 and 135**; a
+**28% block** after Q3 earnings; and the remainder at the 180-day mark.
+
+| Tranche | Date | Size |
+|---|---|---|
+| First (Q2 earnings) | 2026-08-06 | ~911.5M shares — float **+140%** |
+| Accelerated 30% clause | 2026-08-20 | smaller |
+| Day 90 | 2026-09-09 | ~319M |
+| Day 105 | 2026-09-24 | ~328.4M |
+| Day 120 | 2026-10-09 | ~319M |
+| Day 135 (weekend-shifted) | 2026-10-26 | ~319M |
+| Q3 earnings block | post 10-Q (filed 10-22) | 28% |
+| **Final — clears the rest** | **2026-12-08** | remainder; **~40% of the company then tradeable** |
+| Musk's own stake | **~June 2027** (366 days post-IPO) | excluded from every early release |
+
+Sources: Benzinga 2026-09-24 for the Dec 8 date and the 40% figure; CNBC
+2026-05-21 for the S-1 mechanics; Benzinga 2026-07-17 for "mid-December" and the
+Musk/June-2027 restriction. 180 calendar days from the 2026-06-12 debut is
+Dec 9, so Dec 8 and "mid-December" are consistent with each other.
+
+**The guess was arithmetically right and that is not the same as being right.**
+Friday's "around December 9" happened to land within a day of the real date, but
+it was stated without a source — the identical failure mode as asserting that
+SpaceX was private and untradable earlier the same day, with a luckier outcome.
+A correct unsourced claim is still an unsourced claim. Recorded because the
+luck, not the method, is what differed.
+
+**What it means, and what it does not.** The last and largest supply event is
+**~4 weeks out** and the account holds a 2x fund into it. But the record argues
+against assuming a crash: the **Aug 6 unlock was the biggest of all** — it grew
+the tradable float by over 140% — **and the stock rallied**; Aug 20 produced a
+temporary wobble. Unlock dates have not reliably been down days for this name.
+The honest statement is that a known, dated supply event sits four weeks ahead
+of a position with 2x sensitivity and no stop — not that it will fall.
+
+### Monday's mark
+
+| | |
+|---|---|
+| Position | **349.519410 SPCH**, cost **$2,520.00** ($7.2099/sh) |
+| Price | $8.25 last (bid 8.24 / ask 8.25), from a $7.36 Friday close |
+| Value | **$2,883.54** |
+| Unrealized | **+$363.54 · +14.43%** |
+| Account | **$2,885.73**, cash $3.94, ~99.9% in SPCH |
+| SPCH today | +12.09% |
+| SPCX today | +5.96% |
+| Realized leverage | **2.03x — the fund is tracking as designed** |
+
+Had the account stayed in SPCX it would be worth **$2,703.66**. The leverage has
+added about **$180 in two sessions**. That is the leverage working in the
+direction it was bought for over two sessions, and it says nothing whatever
+about the decay cost over months — the −63.5%/yr figure is a statement about
+variance, not about any two days.
+
+SPCH remains **−70.5%** from its 2026-06-16 high of $28.01 and **+55.7%** off
+its 2026-08-06 low of $5.30. SPCX is −36.9% from $225.64 and +35.7% off $104.83.
+
+**Checks run, nothing actionable:** no option positions. No orders this session
+did not place — all four Nov 6 orders are this session's, and the unexplained
+09-08/09-17 pattern did not repeat. `human_must_approve_trades` still reads
+**false** (unchanged since 2026-08-26). Day trades 1 of 3 used. No orders placed
+today and none authorised.
+
+**Still no stop.** Said once, in Friday's entry and once here: this position has
+no exit plan, and a single-leg `stop_market` would actually rest on it — unlike
+the spread that could not be protected in September. Whether to set one is the
+holder's call and has been put to them.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
