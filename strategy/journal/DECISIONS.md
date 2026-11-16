@@ -1010,6 +1010,122 @@ holder's call and has been put to them.
 
 ---
 
+## 2026-11-16 · The holder's next move is declared: SPCH → ANT at the Anthropic IPO
+
+No orders, no deposits, no distributions. The approval setting still reads false.
+Mark-to-market drift is not a change and is not the reason this entry exists —
+**the holder declared a plan**, and the event it depends on is now dated.
+
+### Monday's mark
+
+| | |
+|---|---|
+| Position | 349.519410 SPCH @ **$7.915** = **$2,766.45** |
+| Unrealized | **+$246.45 · +9.78%** (cost $2,520.00) |
+| Account | **$2,770.39**, cash $3.94 |
+| Week | **−$167.77** (from $2,938.16 on 11-09) |
+| Day trades | **3 of 3 free** — the 11-06 trade aged off |
+
+**The decay is now visible in the tape.** Week over week SPCH fell **−4.06%**
+against SPCX's **−1.78%** — a realized ratio of **2.28x**, not 2.00x. One week is
+a small sample and the ratio is noisy, but it moved the wrong way, and the wrong
+way is the direction the structure predicts. Peak unrealized was +16.51% on
+11-11; it is +9.78% today, on an underlying that fell under 2%.
+
+### SpaceX lockup: checked, nothing found
+
+The trigger asked for insider sale filings, Form 144s or announced secondaries
+ahead of the **2026-12-08** final tranche, now ~3 weeks out. **Searches returned
+zero results** across filings and news. Recorded as a negative result, not as
+reassurance — absence of a filing in this index is not absence of selling.
+
+### The Anthropic IPO, verified
+
+| | |
+|---|---|
+| Ticker / venue | **ANT**, Nasdaq Global Select |
+| Prices | **Wed 2026-11-18**, after the close |
+| Trades | **Thu 2026-11-19** |
+| Deal | 825M Class A shares at **$70–$78** |
+| Valuation | $1.02T outstanding · **$1.405T fully diluted** |
+| Retail target | **up to 20%** (typical is 5–10%) |
+| Book | **~6–7x oversubscribed** |
+| US retail lead | JPMorgan; Goldman Sachs and Morgan Stanley lead, 22 banks total |
+
+New figures from the revised S-1 since the last entry: **Q3 revenue $17B**,
+purchase commitments **$895.4B** (was reported $900.9B), **~$80B of first-half
+losses**, ~900% revenue retention. China and Hong Kong institutions are barred
+from the offering on export-control grounds. Anthropic wanted ~$2T in September;
+the Nasdaq is off ~5% in a month and the number came down.
+
+`ANT` exists in Robinhood as a stub — **`tradeable: false`**, no chain, no quote.
+That is what a pre-listing ticker looks like and it is the correct state today.
+
+### What was established this week, and should not have to be re-derived
+
+**1. Retail does not need accreditation for this.** Anthropic's 2026-11-02 filing
+names Robinhood Financial among brokers receiving retail allocation (with Schwab,
+Fidelity, SoFi, E*Trade). The indication of interest is filed **by the holder, in
+the app** — there is no IPO Access tool on this connection and no account size
+changes that.
+
+**2. The accredited-nominee route was raised and declined on the facts.** The
+holder has "access to people that are accredited." Buying through another
+person's accreditation while the money and beneficial ownership are the holder's
+is a nominee purchase: Reg D looks to the beneficial purchaser, platforms require
+a written rep that you buy for your own account and not as agent, and an SPV
+pooling non-accredited money into one deal is looked through under the Investment
+Company Act. It was not needed — see (1) — and pre-IPO secondary is currently
+quoted at a **3–5% premium** to the IPO price, so it was also the worse trade.
+
+**3. A $250k indication is not a $250k allocation.** SpaceX drew >$100B of retail
+orders against a ~$15B tranche. Anthropic's retail tranche is ~$12.2B at the
+midpoint against a 6–7x book. Modelled blends, $250k with the remainder bought at
+a +40% open:
+
+| Fill at $74 | Shares | Blended |
+|---|---|---|
+| 100% | 3,378 | $74.00 |
+| 30% | 2,703 | $92.50 |
+| 15% | 2,558 | $97.74 |
+| 0% | 2,413 | $103.60 |
+
+At a realistic 15% fill the stock must rise **~32% from the IPO price just to
+break even**, because 85% of the money went in after the pop. **The open-market
+price is the trade; the allocation is a rounding error.**
+
+**4. No calls on an IPO, and the precedent is severe.** ANT has no option chain.
+SPCX listed Fri 2026-06-12; its options first traded Tue 2026-06-16 — the **third
+trading day**. On that calendar ANT's earliest possible options date is **Mon
+2026-11-23**.
+
+The first-listed SPCX **$150 call expiring 2026-07-17** — *deep in the money*,
+SPCX near $225 that day, not a lottery ticket — printed **open $57.25, high
+$80.90** on 06-16 and **closed at $0.01** at expiration. $250k at that open ends
+at **$43.67**. The same $250k in SPCX stock bought at the **all-time high** that
+morning is worth ~$159,611 today; bought at the $135 IPO price, ~$266,019.
+**Buying the stock at the worst price in its history beat the deep-ITM call by
+~3,650x.** This account also cannot spread (multi-leg rejected), so only naked
+long calls are available — the worst structure for buying peak IV.
+
+### Standing conflict of interest
+
+Anthropic makes the model writing this journal. Every figure above is sourced and
+dated; the recommendation content is deliberately thin because of it. The holder
+was told this directly and more than once.
+
+### Open and unanswered
+
+- **SPCH**: sell, or hold? Asked 11-09 and 11-11, no answer. Still no stop.
+- **$250k deposit**: not received. `pending_deposits` is $0. A large ACH does not
+  clear instantly and **pricing is Wednesday** — if the cash is meant to back an
+  indication, the window is now.
+- **The IPO Access indication**: the holder's to file, in the app, before pricing.
+
+Nothing is authorised. No orders placed.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
