@@ -1,0 +1,58 @@
+========================================================================================================
+                       HOLD-TIME SWEEP — what shortening the trade actually costs                       
+========================================================================================================
+
+SPY  spot 765.14  IV 10.7%  round-trip friction 1.4% of debit
+ DTE  target      strikes    debit   hold  hit(rn)    need      GAP
+--------------------------------------------------------------------------------------------------------
+  21     50%      780/785 $    107     3d    42.2%   51.4%    +9.2%
+  21     75%      780/785 $    107     4d    33.8%   41.1%    +7.3%
+  21    100%      780/785 $    107     4d    26.9%   34.3%    +7.3%
+  21    150%      780/785 $    107     5d    17.6%   25.7%    +8.1%
+  30     50%      780/785 $    131     4d    45.2%   51.4%    +6.2%
+  30     75%      780/785 $    131     6d    36.3%   41.1%    +4.8%
+  30    100%      780/785 $    131     6d    29.8%   34.3%    +4.4%
+  30    150%      780/785 $    131     8d    20.2%   25.7%    +5.5%
+  44     50%      785/790 $    126     6d    46.4%   51.4%    +5.0%
+  44     75%      785/790 $    126     7d    38.1%   41.1%    +3.0%
+  44    100%      785/790 $    126     9d    31.8%   34.3%    +2.5%
+  44    150%      785/790 $    126    10d    23.2%   25.7%    +2.5%
+  -> lowest bar: 44 DTE / +100% target (gap +2.5 pts, 9d median hold)
+
+NVDA  spot 224.4  IV 32.5%  round-trip friction 8.2% of debit
+ DTE  target      strikes    debit   hold  hit(rn)    need      GAP
+--------------------------------------------------------------------------------------------------------
+  21     50%      235/240 $    115     3d    42.0%   58.2%   +16.2%
+  21     75%      235/240 $    115     4d    33.7%   46.6%   +12.8%
+  21    100%      235/240 $    115     4d    26.6%   38.8%   +12.2%
+  21    150%      235/240 $    115     5d    16.3%   29.1%   +12.8%
+  30     50%      235/240 $    134     5d    45.1%   58.2%   +13.1%
+  30     75%      235/240 $    134     6d    36.2%   46.6%   +10.3%
+  30    100%      235/240 $    134     7d    30.2%   38.8%    +8.6%
+  30    150%      235/240 $    134     8d    19.2%   29.1%    +9.9%
+  44     50%      240/245 $    120     6d    46.1%   58.2%   +12.1%
+  44     75%      240/245 $    120     7d    37.8%   46.6%    +8.7%
+  44    100%      240/245 $    120     8d    32.4%   38.8%    +6.4%
+  44    150%      240/245 $    120    10d    23.5%   29.1%    +5.6%
+  -> lowest bar: 44 DTE / +150% target (gap +5.6 pts, 10d median hold)
+
+========================================================================================================
+                                              READING THIS                                              
+========================================================================================================
+Every GAP is positive, and that is correct, not a bug: under
+risk-neutral drift no configuration profits by itself. The market
+prices these fairly. GAP is simply how much the entry filters must
+add before a config makes money.
+
+The trade-off is the whole answer:
+
+  LOWER TARGET  -> resolves faster and hits far more often, but the
+                   required hit rate rises much faster than the
+                   achieved one. +50% needs ~60%; +100% needs ~40%.
+
+  SHORTER DTE   -> shortens the clock, but the 10-DTE exit eats most
+                   of the holding window and gamma/theta both bite
+                   harder. The bar goes up, not down.
+
+Shortening hold time is available. It is not free, and on these
+numbers it is not cheap either.
