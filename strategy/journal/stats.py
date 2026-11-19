@@ -59,8 +59,9 @@ def main():
     # nothing about whether RATCHET works, and including even one of them at this
     # sample size swamps the estimate. Section 10 judges RATCHET, not the account.
     # 'CORE-ROTATION' is a Core sleeve buy or sale, not a Convexity signal, so it
-    # does not belong in a hit-rate or friction sample either.
-    NOT_RATCHET = ('OUT-OF-FRAMEWORK', 'CORE-ROTATION')
+    # does not belong in a hit-rate or friction sample either. 'IPO-ENTRY' is a
+    # single-stock purchase at an IPO cross -- no setup, no debit, no rails.
+    NOT_RATCHET = ('OUT-OF-FRAMEWORK', 'CORE-ROTATION', 'IPO-ENTRY')
     rows = [r for r in all_rows if r.get('setup', '').strip() not in NOT_RATCHET]
     excluded = len(all_rows) - len(rows)
 

@@ -21,36 +21,40 @@ Branding: always write it as **Bigdata.com** and link https://bigdata.com.
 
 ## RATCHET — RETIRED 2026-11-06
 
-**The account no longer runs RATCHET.** On 2026-11-06 the holder instructed the
-Core sleeve closed and rolled into SpaceX: sold 3.358353 SPY @ $740.705, bought
-19.003746 SPCX @ $131.2899 — then, three hours later, sold that and went **all
-in on SPCH, a 2x leveraged fund on SPCX**. Core-is-SPY was the charter's first
-rule, so the framework no longer describes this account. It had already been
+**The account no longer runs RATCHET.** On 2026-11-06 the holder closed the Core
+sleeve and rolled into SpaceX (SPY → SPCX → SPCH, a 2x leveraged fund). On
+**2026-11-19 all of that was sold and the account went 100% into ANT at the
+Anthropic IPO.** Core-is-SPY was the charter's first rule, so the framework has
+not described this account for some time. It had already been
 unfunded from 2026-09-08 and **unimplementable** from 2026-09-10, when a live
 order revealed this account rejects multi-leg options orders and therefore cannot
 place the debit verticals the Convexity sleeve is built from.
 
-**Current position: 349.519410 SPCH @ $7.2099, cost $2,520.00, ~99.9% of the
-account** (bought 2026-11-06, order `6aee1d90-4104-4ff4-a347-cf3779f0b920`).
-SPCH is **not SpaceX** — it is a 2x daily-reset leveraged fund on SPCX, which
-itself runs 79.7% annualized volatility with a −46.3% worst drawdown in five
-months of listed history. Consequences, all verified and all still true:
+**Current position: 26 ANT @ $112.1564 average, cost $2,916.07, ~99.7% of the
+account**; cash $7.55. Bought 2026-11-19 at the Anthropic IPO in two clips — 20
+shares at the **$111.50 opening cross** (order
+`6aff23b4-27c0-4877-9d46-000cc6aa7d98`) and a 6-share sweep at $114.3445 (order
+`6aff2897-505d-4ed8-8615-31cbbe6c1c71`). Blended entry is **+35.1% over the $83
+IPO price**.
 
-- **Volatility drag at k=2 is σ², i.e. −63.5%/yr of log return** at SPCX's vol —
-  roughly **−47% over a flat year.** SPCX can end a year unchanged and this
-  position still halves.
-- **A ~50% adverse move in SPCX is a wipeout.**
-- **The final SpaceX lockup tranche clears 2026-12-08** (verified 2026-11-09;
-  staggered S-1 schedule, not a single 180-day cliff; ~40% of the company
-  tradable after it; Musk locked until ~June 2027). Past unlocks have **not**
-  reliably been down days — the largest, 2026-08-06, saw the stock rally — so
-  this is a dated supply event taken at 2x, not a prediction.
+ANT mechanics that bind here:
 
-There is no sleeve structure, no position cap, no stop and no stated holding
-period. **Nothing in `strategy/` describes a leveraged single-stock position** —
-in particular the expectancy and break-even figures in `RATCHET.md` §7 assume
-debit verticals and **must not be cited for this position.** It was recommended
-against; the holder overrode that on the numbers, which is their call.
+- **`fractional_tradability: untradable`** — whole shares only, no dollar-based
+  orders, no extended hours. A sub-one-share cash remainder is unavoidable.
+- **Only a resting LIMIT order joins an IPO opening cross.** A market order
+  during the pre-open halt is refused with `EQUITY_INSTRUMENT_EXTERNAL_HALT`.
+  A limit fills at the cross price, not at the limit.
+
+**There is no stop, no position cap and no exit plan.** The holder was asked
+three times and declined; do not raise it again unasked. Nothing in `strategy/`
+describes a single newly-public stock — the expectancy and break-even figures in
+`RATCHET.md` §7 assume debit verticals and **must not be cited for this
+position.** For a stated long hold the relevant base rate is Carson Group's 36
+major IPOs since 2004: 91.7% closed higher on day one, and the **average maximum
+drawdown over the following twelve months was 55.4%**.
+
+**The account holds the stock of the company that makes this model.** Say so
+whenever reporting on it, and keep to sourced figures.
 
 **What still applies, and why it was expensive to learn:**
 
@@ -72,7 +76,7 @@ against; the holder overrode that on the numbers, which is their call.
 - Two agentic orders on 2026-09-08 and 2026-09-17 did not originate from this
   session. Another agent connection holds trade authority here.
 
-**Account: ONLY ••••8464, nicknamed "Agentic."** Never touch another account,
+**Account: ONLY ••••8464** (the broker reports its nickname as **"MCP"**; it is the only agentic-enabled account, so there is no ambiguity). Never touch another account,
 even read-only, without an explicit request. There is no account nicknamed
 "Claude" — the holder confirmed on 2026-09-03 that "Agentic" is the one they
 mean. Confirm the account and buying power at the start of every session.

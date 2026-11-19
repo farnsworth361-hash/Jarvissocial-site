@@ -1126,6 +1126,120 @@ Nothing is authorised. No orders placed.
 
 ---
 
+## 2026-11-19 · SPCH closed, 26 ANT bought at the Anthropic IPO cross. The account is 100% ANT.
+
+The largest decision in this account's history, executed on the holder's explicit
+instruction: *"I want to sell all of my SpaceX for the IPO... And I want to go all
+in on ANT."* Both legs are done.
+
+### The fills
+
+| | |
+|---|---|
+| **SOLD** | 349.519410 SPCH @ **$8.3536**, fees $0.07 → **$2,919.68** |
+| | order `6aff10bc-d26d-4f98-a70f-848ba1224721`, 15:07:40Z |
+| | vs $2,520.00 cost: **+$399.68 · +15.86%** |
+| **BOUGHT** | **20 ANT @ $111.50** = $2,230.00, no fees |
+| | order `6aff23b4-27c0-4877-9d46-000cc6aa7d98`, **16:48:25Z** |
+| **SWEPT** | **6 ANT @ $114.3445** = $686.07, no fees |
+| | order `6aff2897-505d-4ed8-8615-31cbbe6c1c71`, 16:49:27Z |
+| **POSITION** | **26 ANT, average $112.1564, cost $2,916.07** |
+| | cash **$7.55** · account **$2,988.04** |
+
+**$111.50 was the opening cross.** The 20-share clip got the open price exactly.
+The sweep 62 seconds later paid $114.34 as it ran, putting the blended cost
+**+0.59% above the open** — a good execution of "all in at the open."
+
+Against the **$83** IPO price the blended entry is **+35.1%**. The holder bought
+the pop, knowingly, having been shown the arithmetic twice.
+
+**Day trades: 0 consumed.** SPCH was bought 11-06, ANT is a hold.
+
+### The deal, final
+
+Anthropic **upsized** from 825M to **980 million shares** and priced at **$83** —
+above the $70–78 range — raising **$81.3 billion**. That is the **largest IPO on
+record**, past SpaceX's $75B. ~$1.5T fully diluted. Book 6–7x oversubscribed.
+Opened 11:48:25 ET at $111.50, **+34.3%** over the offer.
+
+Context at the open: perpetual futures ~$104, Entropy implied $98, Morningstar
+fair value $92. Analyst initiations that morning — Melius $155, Needham $150,
+Wolfe $135, Citizens $125. From the revised S-1: Q3 revenue $17B, purchase
+commitments **$895.4B**, ~$80B first-half losses. China and Hong Kong
+institutions barred on export-control grounds.
+
+### Mechanics worth never re-deriving
+
+**1. Only a resting LIMIT order can join an IPO opening cross.** For ~100 minutes
+ANT read `tradeable: true` but `has_traded: false`. A market order was refused
+with `EQUITY_INSTRUMENT_EXTERNAL_HALT`; a limit order at the same moment was
+accepted into the book. Polling for the halt to lift and then firing market is
+strictly slower and worse. **Rest a limit; it fills at the cross price, not at
+the limit.**
+
+**2. ANT is `fractional_tradability: untradable`.** Whole shares only, no
+dollar-based orders, no extended hours. A sub-one-share cash remainder is
+structural, not sloppiness. $7.55 is the floor here.
+
+**3. A limit's ceiling sets the share count**, because quantity × limit must fit
+buying power. That is the real tension: a higher ceiling buys fill-certainty and
+costs shares. It resolves by setting the ceiling for certainty and sweeping the
+remainder immediately after the print.
+
+**4. Timing.** The cross came **28 minutes after the holder's estimate** and 2
+minutes after SpaceX's equivalent (11:46 ET on 2026-06-12). A frozen indication
+feed — $110 unchanged for 23 minutes — did **not** mean a delay.
+
+### The ceiling raise was right, and not for the reason it was made
+
+At 11:23 the indication had climbed $103.75 → $110 and the holder said *"raise
+the ceiling now, don't miss the fill."* The resting 24 @ $121 was cancelled and
+replaced with **20 @ $145** (orders above; the cancelled one is
+`6aff125c-da1f-4228-9699-1fac8a4f5d91`, 0 filled).
+
+**The cross at $111.50 would have cleared the original $121 ceiling anyway.** So
+the raise changed nothing — 24 shares would have filled, with a smaller sweep,
+landing at the same 26. Recorded because it is the second time this journal has
+caught a decision that was *correct on the information available and vindicated
+by luck rather than by reasoning*. The first was the Dec 8 lockup guess.
+
+The cancel-and-replace also opened a window with **no order in the book**. It was
+seconds and nothing crossed in it, but that was real exposure created by the
+agent, not by the market.
+
+### What this position is now
+
+**26 ANT is 99.7% of the account. There is no stop, no cap, and no exit plan.**
+A single-leg `stop_market` *would* rest on this, unlike the September spread. The
+holder has been asked three times across this position and has not wanted one.
+That is their decision, recorded, and it will not be raised again unasked.
+
+The number that matters for a stated long hold, from Carson Group's 36 major IPOs
+since 2004: **91.7% closed higher on day one** (average +49.3%), and the
+**average maximum drawdown over the following twelve months was 55.4%**, median
+52.6%. Rivian popped 29% then fell 88%. CoreWeave — the closest AI comparable —
+finished day one flat, then fell 64.8%. A strong debut and a brutal first year
+are not alternatives; historically they are the same event.
+
+### Two things that did not happen
+
+- **The $250,000 never arrived.** `pending_deposits` read $0 all week. The
+  position was funded entirely by the SPCH proceeds.
+- **No IPO Access allocation.** Every share was bought in the open market at or
+  after the cross. Whether an indication was filed in the app is unknown to this
+  session; no allocation appeared.
+
+### Conflict of interest
+
+**The account is now entirely in the stock of the company that makes the model
+writing this journal.** Every figure here is sourced, dated and taken from order
+receipts or the market data tools. The holder was told this plainly and more than
+once, and declined to weight it differently. It is recorded here so that any
+later reader discounts this journal's enthusiasm accordingly — including its
+restraint, which is just as much a choice.
+
+---
+
 ## Logging protocol
 
 **Every fill** gets a row in `trades.csv`, including `debit_mid` and
